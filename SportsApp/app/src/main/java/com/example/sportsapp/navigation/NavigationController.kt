@@ -25,4 +25,6 @@ fun NavigationController() {
 
 sealed class FoodScreens(val route: String) {
     object FoodSearch : FoodScreens(route = "SEARCH")
+    object FoodDetails : FoodScreens(route = "DETAILS")
+    object MealPlanner : FoodScreens(route = "PLANNER")
 }

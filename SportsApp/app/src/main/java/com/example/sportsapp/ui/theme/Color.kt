@@ -9,3 +9,5 @@ val Teal200 = Color(0xFF03DAC5)
 val PrimaryColorNavy = Color(0xFF0A1126)
 val PrimaryColor = Color(0xFF0A1136)
 val SecondaryColor = Color(0xFF971414)
+val SearchBarColor = Color(0xFFBFC0C5)
+

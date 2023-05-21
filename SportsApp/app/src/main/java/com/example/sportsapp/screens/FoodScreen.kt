@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,14 +30,20 @@ import com.example.sportsapp.ui.theme.SecondaryColor
 
 @Composable
 fun FoodScreen(navController: NavHostController = rememberNavController()) {
-    var text by rememberSaveable { mutableStateOf("wow") }
-    val screenSize = LocalConfiguration.current.screenWidthDp.dp
     Box(
         modifier = Modifier.fillMaxSize().background(PrimaryColorNavy),
         contentAlignment = Alignment.Center,
     ) {
         Column(Modifier.padding(30.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            FoodActionCardLong(modifier = Modifier.fillMaxWidth(), color = SecondaryColor, label = "Make your own meal plan", icon = R.drawable.baseline_fitness_center_24)
+            FoodActionCardLong(
+                modifier = Modifier.fillMaxWidth(),
+                color = SecondaryColor,
+                label = "Make your own meal plan",
+                icon = R.drawable.baseline_fitness_center_24,
+                onClick = {
+                    navController.navigate(FoodScreens.MealPlanner.route)
+                }
+            )
             PairedCards(
                 leftCard = {
                     FoodActionCard(
@@ -47,14 +52,14 @@ fun FoodScreen(navController: NavHostController = rememberNavController()) {
                         icon = R.drawable.baseline_search_24,
                         onClick = {
                             navController.navigate(FoodScreens.FoodSearch.route)
-                                  },
+                        },
                     )
                 },
                 rightCard = {
                     FoodActionCard(
                         modifier = Modifier.weight(1f),
-                        label = "Meal Plan",
-                        icon = R.drawable.baseline_search_24,
+                        label = "Favorites",
+                        icon = R.drawable.baseline_star_24,
                     )
                 },
             )
