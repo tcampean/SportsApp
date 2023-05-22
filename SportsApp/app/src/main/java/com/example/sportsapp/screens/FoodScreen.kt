@@ -38,10 +38,10 @@ fun FoodScreen(navController: NavHostController = rememberNavController()) {
             FoodActionCardLong(
                 modifier = Modifier.fillMaxWidth(),
                 color = SecondaryColor,
-                label = "Make your own meal plan",
-                icon = R.drawable.baseline_fitness_center_24,
+                label = "Get a meal plan",
+                icon = R.drawable.schedule,
                 onClick = {
-                    navController.navigate(FoodScreens.MealPlanner.route)
+                    navController.navigate(FoodScreens.MealPlannerCategory.route)
                 }
             )
             PairedCards(
@@ -104,8 +104,8 @@ fun FoodActionCardLong(modifier: Modifier = Modifier, label: String, color: Colo
         backgroundColor = color,
     ) {
         Box(modifier = Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.TopStart) {
-            Row(horizontalArrangement = Arrangement.Center) {
-                Image(modifier = Modifier.height(screenSize / 4).width(screenSize / 4), painter = painterResource(id = icon), contentDescription = label, contentScale = ContentScale.FillBounds)
+            Row(modifier = Modifier.fillMaxHeight()) {
+                Image(modifier = Modifier.align(Alignment.CenterVertically).height(screenSize / 4).width(screenSize / 4), painter = painterResource(id = icon), contentDescription = label, contentScale = ContentScale.FillBounds)
                 Text(modifier = Modifier, text = label, color = PrimaryColor, fontSize = 35.sp, textAlign = TextAlign.End, overflow = TextOverflow.Clip)
             }
         }

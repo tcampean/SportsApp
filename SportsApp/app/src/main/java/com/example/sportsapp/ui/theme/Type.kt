@@ -41,7 +41,19 @@ val StaticTextTypography = Typography(
         fontSize = 26.sp,
         color = Color.White,
     )
+)
 
+val ItemTypography = Typography(
+    body1 = TextStyle(
+        color = PrimaryColorNavy,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 24.sp,
+    ),
+    body2 = TextStyle(
+        color = PrimaryColorNavy,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+    )
 )
 
 val LoginFormTypography = Typography(

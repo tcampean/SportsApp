@@ -12,9 +12,11 @@ import androidx.navigation.compose.navigation
 import com.example.sportsapp.data.BottomBarScreen
 import com.example.sportsapp.screens.FoodDetailsScreen
 import com.example.sportsapp.screens.FoodScreen
+import com.example.sportsapp.screens.MealPlanCategoryScreen
 import com.example.sportsapp.screens.MealPlanScreen
 import com.example.sportsapp.screens.SearchFoodScreen
 import com.example.sportsapp.viewmodels.FoodDetailsViewModel
+import com.example.sportsapp.viewmodels.MealPlanViewModel
 
 @Composable
 fun MainNavGraph(navController: NavHostController) {
@@ -38,6 +40,8 @@ fun MainNavGraph(navController: NavHostController) {
 }
 
 fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
+    val mealPlanViewModel = MealPlanViewModel()
+
     navigation(
         route = Graph.FOOD,
         startDestination = BottomBarScreen.Food.route,
@@ -55,8 +59,12 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
             FoodDetailsScreen(viewModel = viewModel)
         }
 
-        composable(route = FoodScreens.MealPlanner.route) {
-            MealPlanScreen()
+        composable(route = FoodScreens.MealPlannerCategory.route) {
+            MealPlanCategoryScreen(navController, mealPlanViewModel)
+        }
+
+        composable(route = FoodScreens.MealPlanGenerated.route) {
+            MealPlanScreen(navController, mealPlanViewModel)
         }
     }
 }
