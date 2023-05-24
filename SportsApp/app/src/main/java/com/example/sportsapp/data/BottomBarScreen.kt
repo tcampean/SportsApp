@@ -13,10 +13,10 @@ sealed class BottomBarScreen(
         icon = R.drawable.baseline_home_24,
     )
 
-    object Profile : BottomBarScreen(
+    object Workouts : BottomBarScreen(
         route = "WORKOUTS",
         title = "WORKOUTS",
-        icon = R.drawable.baseline_fitness_center_24,
+        icon = R.drawable.baseline_fitness_center_24_navy,
     )
 
     object Food : BottomBarScreen(

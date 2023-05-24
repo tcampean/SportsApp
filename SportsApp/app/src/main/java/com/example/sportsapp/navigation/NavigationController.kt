@@ -29,3 +29,8 @@ sealed class FoodScreens(val route: String) {
     object MealPlannerCategory : FoodScreens(route = "PLANNERCATEGORY")
     object MealPlanGenerated : FoodScreens(route = "GENERATEDPLAN")
 }
+
+sealed class WorkoutScreens(val route: String) {
+    object ExerciseDifficulty : WorkoutScreens(route = "EXERCISEDIFFICULTY")
+    object ExerciseResults : WorkoutScreens(route = "EXERCISERESULTS")
+}
