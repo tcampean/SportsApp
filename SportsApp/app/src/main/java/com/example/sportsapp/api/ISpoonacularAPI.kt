@@ -9,8 +9,10 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+//SPOONACULAR
 //52324220637546daa5cc71f978daebf2
 //9f40e23d18ad417eb2f95b96c1893e4f
+
 interface ISpoonacularAPI {
     @GET("/recipes/complexSearch?apiKey=52324220637546daa5cc71f978daebf2&number=10")
     fun getRecipes(@Query("query") query: String, @Query("offset") offset: Int): Call<Results>
@@ -23,5 +25,4 @@ interface ISpoonacularAPI {
 
     @GET("mealplanner/generate?apiKey=52324220637546daa5cc71f978daebf2&timeFrame=week")
     fun generateWeekMeal(@Query("diet") diet: String): Call<WeekPlan>
-
 }

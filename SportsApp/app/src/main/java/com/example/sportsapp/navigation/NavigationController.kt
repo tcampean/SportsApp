@@ -32,5 +32,7 @@ sealed class FoodScreens(val route: String) {
 
 sealed class WorkoutScreens(val route: String) {
     object ExerciseDifficulty : WorkoutScreens(route = "EXERCISEDIFFICULTY")
+
+    object ExerciseMuscleGroupSelection : WorkoutScreens(route = "EXERCISEMUSCLESELECTION")
     object ExerciseResults : WorkoutScreens(route = "EXERCISERESULTS")
 }

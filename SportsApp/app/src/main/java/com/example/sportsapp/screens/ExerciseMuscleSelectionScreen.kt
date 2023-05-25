@@ -6,12 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -23,39 +26,58 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.sportsapp.R
 import com.example.sportsapp.components.BaseCard
-import com.example.sportsapp.navigation.WorkoutScreens
+import com.example.sportsapp.components.RoundBottomCard
+import com.example.sportsapp.ui.theme.LoginFormTypography
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.viewmodels.ExerciseViewModel
 
 @Composable
-fun ExerciseDifficultyScreen(navController: NavHostController = rememberNavController(), viewModel: ExerciseViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun ExerciseMuscleSelection(navController: NavController = rememberNavController(), viewModel: ExerciseViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+    val difficulty by viewModel.difficulty.collectAsState()
+
     Box(
         modifier = Modifier.fillMaxSize().background(PrimaryColorNavy),
-        contentAlignment = Alignment.Center,
     ) {
-        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            DifficultyItemCard(modifier = Modifier, difficulty = "Easy", resource = R.drawable.easy_difficulty) {
-                viewModel.setDifficulty("Easy")
-                navController.navigate(WorkoutScreens.ExerciseMuscleGroupSelection.route)
+        Column {
+            RoundBottomCard(
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = Color.White,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "Difficulty: ",
+                        style = LoginFormTypography.body1,
+                    )
+                    Text(
+                        text = difficulty,
+                        style = LoginFormTypography.body1,
+                    )
+                }
             }
-            DifficultyItemCard(modifier = Modifier, difficulty = "Intermediate", resource = R.drawable.intermediate_difficulty) {
-                viewModel.setDifficulty("Intermediate")
-                navController.navigate(WorkoutScreens.ExerciseMuscleGroupSelection.route)
-            }
-            DifficultyItemCard(modifier = Modifier, difficulty = "Expert", resource = R.drawable.expert_difficulty) {
-                viewModel.setDifficulty("Expert")
-                navController.navigate(WorkoutScreens.ExerciseMuscleGroupSelection.route)
+            Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                MuscleGroupItemCard(
+                    modifier = Modifier,
+                    muscleGroup = "Biceps",
+                    resource = R.drawable.intermediate_difficulty,
+                ) {
+                    viewModel.setMuscle("biceps")
+                }
             }
         }
     }
 }
 
 @Composable
-fun DifficultyItemCard(modifier: Modifier, difficulty: String, resource: Int, onClick: () -> Unit) {
+fun MuscleGroupItemCard(modifier: Modifier, muscleGroup: String, resource: Int, onClick: () -> Unit) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     Box(
         modifier = modifier.fillMaxWidth()
@@ -67,13 +89,13 @@ fun DifficultyItemCard(modifier: Modifier, difficulty: String, resource: Int, on
             Image(
                 modifier = Modifier.alpha(0.6f).matchParentSize(),
                 painter = painterResource(id = resource),
-                contentDescription = "diet picture",
+                contentDescription = "muscle group picture",
                 contentScale = ContentScale.Crop,
             )
         }
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = difficulty,
+            text = muscleGroup,
             color = Color.White,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
@@ -83,6 +105,6 @@ fun DifficultyItemCard(modifier: Modifier, difficulty: String, resource: Int, on
 
 @Preview
 @Composable
-fun PreviewExerciseDifficultyScreen() {
-    ExerciseDifficultyScreen()
+fun PreviewExerciseMuscleSelection() {
+    ExerciseMuscleSelection()
 }
