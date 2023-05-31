@@ -1,15 +1,19 @@
 package com.example.sportsapp.api
 
 import com.example.sportsapp.data.Exercise
-import com.example.sportsapp.data.Results
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Query
 
-
-//VKhgPIa9Nc4ErWYpp3jE45XRbNIbi6dA0ueFlQv3 EXERCISES
+// VKhgPIa9Nc4ErWYpp3jE45XRbNIbi6dA0ueFlQv3 EXERCISES
 interface IExerciseNinjaAPI {
 
-    @GET("/exercises?X-Api-Key=VKhgPIa9Nc4ErWYpp3jE45XRbNIbi6dA0ueFlQv3")
-    fun getExercises(@Query("muscle") query: String, @Query("difficulty") offset: Int): Call<List<Exercise>>
+    @GET("/v1/exercises")
+    fun getExercises(
+        @Header("x-api-key") apiKey: String = "L6IlWHXrG97B2tHAlogqKsrlIJwf3k0gPI3a5djd",
+        @Query("muscle") muscle: String,
+        @Query("difficulty") difficulty: String,
+        @Query("offset") offset: Int,
+    ): Call<List<Exercise>>
 }

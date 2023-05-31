@@ -1,8 +1,6 @@
 package com.example.sportsapp.screens
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.sportsapp.R
 import com.example.sportsapp.components.BaseCard
 import com.example.sportsapp.components.RoundBottomCard
+import com.example.sportsapp.navigation.WorkoutScreens
 import com.example.sportsapp.ui.theme.LoginFormTypography
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.viewmodels.ExerciseViewModel
@@ -63,13 +62,48 @@ fun ExerciseMuscleSelection(navController: NavController = rememberNavController
                     )
                 }
             }
-            Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                MuscleGroupItemCard(
-                    modifier = Modifier,
-                    muscleGroup = "Biceps",
-                    resource = R.drawable.intermediate_difficulty,
-                ) {
-                    viewModel.setMuscle("biceps")
+            Box(Modifier.verticalScroll(rememberScrollState())) {
+                Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    MuscleGroupItemCard(
+                        modifier = Modifier,
+                        muscleGroup = "Biceps",
+                        resource = R.drawable.intermediate_difficulty,
+                    ) {
+                        viewModel.setMuscle("biceps")
+                        navController.navigate(WorkoutScreens.ExerciseResults.route)
+                    }
+                    MuscleGroupItemCard(
+                        modifier = Modifier,
+                        muscleGroup = "Abs",
+                        resource = R.drawable.intermediate_difficulty,
+                    ) {
+                        viewModel.setMuscle("abdominals")
+                        navController.navigate(WorkoutScreens.ExerciseResults.route)
+                    }
+                    MuscleGroupItemCard(
+                        modifier = Modifier,
+                        muscleGroup = "Chest",
+                        resource = R.drawable.intermediate_difficulty,
+                    ) {
+                        viewModel.setMuscle("chest")
+                        navController.navigate(WorkoutScreens.ExerciseResults.route)
+                    }
+                    MuscleGroupItemCard(
+                        modifier = Modifier,
+                        muscleGroup = "Back",
+                        resource = R.drawable.intermediate_difficulty,
+                    ) {
+                        viewModel.setMuscle("middle_back")
+                        navController.navigate(WorkoutScreens.ExerciseResults.route)
+                    }
+                    MuscleGroupItemCard(
+                        modifier = Modifier,
+                        muscleGroup = "Legs",
+                        resource = R.drawable.intermediate_difficulty,
+                    ) {
+                        viewModel.setMuscle("calves")
+                        navController.navigate(WorkoutScreens.ExerciseResults.route)
+                    }
                 }
             }
         }

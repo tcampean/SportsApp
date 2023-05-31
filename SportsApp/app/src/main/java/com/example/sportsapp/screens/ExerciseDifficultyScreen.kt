@@ -38,8 +38,8 @@ fun ExerciseDifficultyScreen(navController: NavHostController = rememberNavContr
         contentAlignment = Alignment.Center,
     ) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            DifficultyItemCard(modifier = Modifier, difficulty = "Easy", resource = R.drawable.easy_difficulty) {
-                viewModel.setDifficulty("Easy")
+            DifficultyItemCard(modifier = Modifier, difficulty = "Beginner", resource = R.drawable.easy_difficulty) {
+                viewModel.setDifficulty("Beginner")
                 navController.navigate(WorkoutScreens.ExerciseMuscleGroupSelection.route)
             }
             DifficultyItemCard(modifier = Modifier, difficulty = "Intermediate", resource = R.drawable.intermediate_difficulty) {
