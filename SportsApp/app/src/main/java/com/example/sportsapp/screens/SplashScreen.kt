@@ -1,11 +1,8 @@
 package com.example.sportsapp.screens
 
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.* // ktlint-disable no-wildcard-imports
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -131,12 +128,17 @@ fun SplashScreen(navController: NavController?, viewModel: LoginViewModel) {
                                     .padding(start = 80.dp, top = 30.dp, end = 80.dp)
                                     .height(50.dp),
                                 backgroundColor = PrimaryColorNavy,
-                                onClick = {},
+                                onClick = {
+                                    navController?.popBackStack()
+                                    navController?.navigate(Graph.HOME)
+                                },
                             ) {
                                 Text(text = "Login", style = StaticTextTypography.body1)
                             }
                             Text(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth().clickable {
+                                    navController?.navigate(Graph.REGISTER)
+                                },
                                 text = "Don't have an account?",
                                 style = StaticTextTypography.body1,
                                 color = PrimaryColorNavy,
@@ -154,8 +156,6 @@ fun SplashScreen(navController: NavController?, viewModel: LoginViewModel) {
                 delay(500)
                 viewModel.changeVisib()
                 delay(700)
-                navController?.popBackStack()
-                navController?.navigate(Graph.HOME)
             }
         })
     }

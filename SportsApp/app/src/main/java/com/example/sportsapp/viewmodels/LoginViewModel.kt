@@ -11,7 +11,7 @@ class LoginViewModel() : ViewModel() {
     private val _visib = MutableStateFlow(false)
     val visib = _visib.asStateFlow()
 
-    private val _shouldDisplayLoginForm = MutableStateFlow(false)
+    private val _shouldDisplayLoginForm = MutableStateFlow(true)
     val shouldDisplayLoginForm = _shouldDisplayLoginForm.asStateFlow()
 
     private val _formData = MutableStateFlow(LoginFormData())

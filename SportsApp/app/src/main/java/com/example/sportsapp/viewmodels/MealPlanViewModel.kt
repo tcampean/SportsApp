@@ -52,7 +52,6 @@ class MealPlanViewModel : ViewModel() {
     private var generationLocked = false
 
     fun setMealPlanLength(length: String) {
-        println("Meal plan length set to " + length)
         mealPlanLength = length
     }
 
@@ -69,7 +68,6 @@ class MealPlanViewModel : ViewModel() {
     }
 
     fun generateNewMealPlan() {
-        println("generating new meal with length" + mealPlanLength)
         if (!_shouldDisplayProgressBar.value && !generationLocked) {
             generationLocked = true
             _shouldDisplayProgressBar.value = true

@@ -1,12 +1,18 @@
 package com.example.sportsapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.sportsapp.screens.ActivityLevelScreen
+import com.example.sportsapp.screens.GoalsScreen
 import com.example.sportsapp.screens.MainScreen
 import com.example.sportsapp.screens.SplashScreen
 import com.example.sportsapp.viewmodels.LoginViewModel
+import com.example.sportsapp.viewmodels.RegisterViewModel
 
 @Composable
 fun NavigationController() {
@@ -20,6 +26,24 @@ fun NavigationController() {
         composable(Graph.HOME) {
             MainScreen()
         }
+
+        registrationGraph(navController)
+    }
+}
+
+fun NavGraphBuilder.registrationGraph(navController: NavController) {
+    val registerViewModel = RegisterViewModel()
+    navigation(
+        route = Graph.REGISTER,
+        startDestination = RegisterScreens.GoalSetting.route,
+    ) {
+        composable(route = RegisterScreens.GoalSetting.route) {
+            GoalsScreen(navController, registerViewModel)
+        }
+
+        composable(route = RegisterScreens.ActivityLevelSetting.route) {
+            ActivityLevelScreen(navController, registerViewModel)
+        }
     }
 }
 
@@ -32,7 +56,13 @@ sealed class FoodScreens(val route: String) {
 
 sealed class WorkoutScreens(val route: String) {
     object ExerciseDifficulty : WorkoutScreens(route = "EXERCISEDIFFICULTY")
-
     object ExerciseMuscleGroupSelection : WorkoutScreens(route = "EXERCISEMUSCLESELECTION")
     object ExerciseResults : WorkoutScreens(route = "EXERCISERESULTS")
+}
+
+sealed class RegisterScreens(val route: String) {
+    object GoalSetting : FoodScreens(route = "GOALS")
+    object ActivityLevelSetting : FoodScreens(route = "ACTIVITY")
+    object AboutYouSetting : FoodScreens(route = "ABOUTYOU")
+    object MealPlanGenerated : FoodScreens(route = "GENERATEDPLAN")
 }

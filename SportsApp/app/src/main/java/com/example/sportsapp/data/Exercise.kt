@@ -1,5 +1,9 @@
 package com.example.sportsapp.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Exercise(
     val name: String,
     val type: String,
@@ -7,4 +11,4 @@ data class Exercise(
     val equipment: String,
     val difficulty: String,
     val instructions: String,
-)
+) : Parcelable

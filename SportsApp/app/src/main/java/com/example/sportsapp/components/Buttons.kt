@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +32,20 @@ fun BaseButton(modifier: Modifier = Modifier, backgroundColor: Color, enabled: B
     }
 }
 
+@Composable
+fun TextBaseButton(modifier: Modifier = Modifier, text: String, textColor: Color, backgroundColor: Color, enabled: Boolean = true, onClick: () -> Unit, content: @Composable () -> Unit) {
+    TextButton(
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = backgroundColor,
+        ),
+        shape = RoundedCornerShape(CornerSize(5.dp)),
+        enabled = enabled,
+        onClick = { onClick() },
+    ) {
+        Text(text = text, color = textColor)
+    }
+}
 @Composable
 fun ImageButton(modifier: Modifier = Modifier, image: Painter, enabled: Boolean = true, onClick: () -> Unit) {
     Image(
