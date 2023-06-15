@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,12 +26,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportsapp.components.RoundTopCard
 import com.example.sportsapp.data.Ingredient
+import com.example.sportsapp.database.AppDatabase
+import com.example.sportsapp.database.MealDao
+import com.example.sportsapp.repository.MealRepository
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.FoodDetailsViewModel
 
 @Composable
-fun FoodDetailsScreen(viewModel: FoodDetailsViewModel) {
+fun FoodDetailsScreen(viewModel: FoodDetailsViewModel, mealRepository: MealRepository = MealRepository(AppDatabase.getInstance(
+    LocalContext.current).productDao())) {
     val image by viewModel.image.collectAsState()
     val title by viewModel.title.collectAsState()
     val serving by viewModel.servings.collectAsState()

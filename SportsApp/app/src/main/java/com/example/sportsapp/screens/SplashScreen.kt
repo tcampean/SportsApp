@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportsapp.R
+import com.example.sportsapp.api.MainAPI
 import com.example.sportsapp.components.* // ktlint-disable no-wildcard-imports
 import com.example.sportsapp.navigation.Graph
 import com.example.sportsapp.ui.theme.LoginFormTypography
@@ -129,6 +130,7 @@ fun SplashScreen(navController: NavController?, viewModel: LoginViewModel) {
                                     .height(50.dp),
                                 backgroundColor = PrimaryColorNavy,
                                 onClick = {
+                                    MainAPI.retrofitService.
                                     navController?.popBackStack()
                                     navController?.navigate(Graph.HOME)
                                 },

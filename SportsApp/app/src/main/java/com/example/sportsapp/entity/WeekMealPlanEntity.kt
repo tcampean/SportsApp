@@ -1,0 +1,19 @@
+package com.example.sportsapp.entity
+
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import com.example.sportsapp.data.DayPlan
+
+@Entity(tableName = "DayMealPlan", indices = [Index(value = ["name"], unique = true)])
+data class WeekMealPlanEntity(
+    val name: String,
+    val monday: DayPlan,
+    val tuesday: DayPlan,
+    val wednesday: DayPlan,
+    val thursday: DayPlan,
+    val friday: DayPlan,
+    val saturday: DayPlan,
+    val sunday: DayPlan,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
+)
