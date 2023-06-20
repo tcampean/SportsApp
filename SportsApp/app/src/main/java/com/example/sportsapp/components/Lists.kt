@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -34,14 +35,11 @@ import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
 
 @Composable
-fun PaginatedRecipeLazyColumn(navController: NavController, itemList: List<Recipe>, onScrollToEnd: () -> Unit) {
+fun PaginatedRecipeLazyColumn(itemList: List<Any>, itemLayout: @Composable (item: Any) -> Unit, onScrollToEnd: () -> Unit) {
     val listState = rememberLazyListState()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), state = listState) {
         items(items = itemList) {
-            SearchFoodItem(title = it.title, imageUrl = it.image, onClick = {
-                navController.currentBackStackEntry?.arguments?.putInt("ID", it.id)
-                navController.navigate(route = FoodScreens.FoodDetails.route)
-            })
+            itemLayout(it)
         }
 
         if (listState.isScrolledToTheEnd()) {
@@ -90,9 +88,41 @@ fun SearchFoodItem(title: String, imageUrl: String, onClick: () -> Unit) {
                     color = PrimaryColorNavy,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 24.sp,
-                    overflow = TextOverflow.Visible
+                    overflow = TextOverflow.Visible,
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SearchFoodItemNoPicture(title: String, onClick: () -> Unit, onDeleteClick: () -> Unit) {
+    BaseCard(
+        modifier = Modifier.fillMaxWidth().clickable {
+            onClick()
+        },
+        cornerSize = 0,
+        backgroundColor = Color.White,
+    ) {
+        Row {
+            Box(modifier = Modifier.weight(5f), contentAlignment = Alignment.Center) {
+                Text(
+                    modifier = Modifier.padding(
+                        top = 5.dp,
+                        start = 10.dp,
+                        end = 5.dp,
+                        bottom = 5.dp,
+                    ).align(Alignment.Center),
+                    text = title,
+                    color = PrimaryColorNavy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 24.sp,
+                    overflow = TextOverflow.Visible,
+                )
+            }
+
+            Image(modifier = Modifier.size(30.dp).align(Alignment.CenterVertically).weight(1f)
+                .clickable { onDeleteClick() }, painter = painterResource(id = R.drawable.baseline_delete_24), contentDescription = "delete")
         }
     }
 }
@@ -155,4 +185,3 @@ fun ExerciseItem(exercise: Exercise, onClick: () -> Unit) {
         }
     }
 }
-

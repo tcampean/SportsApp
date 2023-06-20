@@ -1,7 +1,8 @@
 package com.example.sportsapp.api
 
-import okhttp3.Request
+import com.example.sportsapp.data.requestData.RegisterData
 import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,8 +14,8 @@ interface IMainAPI {
     @GET("/login")
     fun login(): Call<List<Response>>
 
-    @POST("/register")
-    fun register(@Body request: Request): Call<Response>
+    @POST("/register/")
+    fun register(@Body registerData: RegisterData): Call<ResponseBody>
 
     @PUT("/updateWeight")
     fun updateWeight(@Body body: Response): Call<Response>

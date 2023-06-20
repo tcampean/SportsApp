@@ -1,38 +1,28 @@
 package com.example.sportsapp.screens
 
-import android.graphics.BitmapFactory
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.sportsapp.R
 import com.example.sportsapp.components.*
+import com.example.sportsapp.data.Recipe
+import com.example.sportsapp.navigation.FoodScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.viewmodels.SearchViewModel
-import com.squareup.picasso.Picasso
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
 
 @Composable
-fun SearchFoodScreen(navController: NavController, viewModel: SearchViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun SearchFoodScreen(navController: NavController = rememberNavController(), viewModel: SearchViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val resultList by viewModel.recipeList.collectAsState()
     val searchText by viewModel.searchText.collectAsState()
     Box(
@@ -50,9 +40,18 @@ fun SearchFoodScreen(navController: NavController, viewModel: SearchViewModel = 
                 },
             )
 
-            PaginatedRecipeLazyColumn(navController, resultList, onScrollToEnd = {
-                viewModel.requestDataAppend()
-            })
+            PaginatedRecipeLazyColumn(
+                resultList,
+                itemLayout = {
+                    SearchFoodItem(title = (it as Recipe).title, imageUrl = it.image, onClick = {
+                        navController.currentBackStackEntry?.arguments?.putInt("ID", it.id)
+                        navController.navigate(route = FoodScreens.FoodDetails.route)
+                    })
+                },
+                onScrollToEnd = {
+                    viewModel.requestDataAppend()
+                },
+            )
         }
     }
 }
@@ -85,4 +84,5 @@ fun SearchBar(searchText: String, onTextChange: (String) -> Unit = {}, onSearchB
 @Preview
 @Composable
 fun PreviewSearchScreen() {
+    SearchFoodScreen()
 }

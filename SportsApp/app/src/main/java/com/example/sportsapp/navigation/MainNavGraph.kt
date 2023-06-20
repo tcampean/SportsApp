@@ -3,6 +3,7 @@ package com.example.sportsapp.navigation
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,8 +11,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.sportsapp.data.BottomBarScreen
+import com.example.sportsapp.database.AppDatabase
+import com.example.sportsapp.repository.MealRepository
 import com.example.sportsapp.screens.*
 import com.example.sportsapp.viewmodels.ExerciseViewModel
+import com.example.sportsapp.viewmodels.FavoriteMealViewModel
 import com.example.sportsapp.viewmodels.FoodDetailsViewModel
 import com.example.sportsapp.viewmodels.MealPlanViewModel
 
@@ -54,6 +58,7 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
             }
             val viewModel: FoodDetailsViewModel = viewModel()
             viewModel.setRecipeId(id!!)
+            viewModel.setDao(AppDatabase.getInstance(LocalContext.current).mealDao())
             FoodDetailsScreen(viewModel = viewModel)
         }
 
@@ -63,6 +68,12 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
 
         composable(route = FoodScreens.MealPlanGenerated.route) {
             MealPlanScreen(navController, mealPlanViewModel)
+        }
+
+        composable(route = FoodScreens.FoodFavorites.route) {
+            val viewModel: FavoriteMealViewModel = viewModel()
+            viewModel.setRepository(MealRepository(AppDatabase.getInstance(LocalContext.current).mealDao()))
+            FavoriteMealScreen(navController, viewModel)
         }
     }
 }

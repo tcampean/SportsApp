@@ -49,6 +49,9 @@ fun FoodScreen(navController: NavHostController = rememberNavController()) {
                         modifier = Modifier.weight(1f),
                         label = "Favorites",
                         icon = R.drawable.baseline_star_24,
+                        onClick = {
+                            navController.navigate(FoodScreens.FoodFavorites.route)
+                        }
                     )
                 },
             )

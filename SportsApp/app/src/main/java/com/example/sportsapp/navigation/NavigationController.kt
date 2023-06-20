@@ -7,10 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.sportsapp.screens.ActivityLevelScreen
-import com.example.sportsapp.screens.GoalsScreen
-import com.example.sportsapp.screens.MainScreen
-import com.example.sportsapp.screens.SplashScreen
+import com.example.sportsapp.screens.*
 import com.example.sportsapp.viewmodels.LoginViewModel
 import com.example.sportsapp.viewmodels.RegisterViewModel
 
@@ -44,12 +41,22 @@ fun NavGraphBuilder.registrationGraph(navController: NavController) {
         composable(route = RegisterScreens.ActivityLevelSetting.route) {
             ActivityLevelScreen(navController, registerViewModel)
         }
+
+        composable(route = RegisterScreens.AboutYouSetting.route) {
+           AboutYouScreen(navController, registerViewModel)
+        }
+
+        composable(route = RegisterScreens.RegisterScreen.route) {
+           RegisterScreen(navController, registerViewModel)
+        }
     }
 }
 
 sealed class FoodScreens(val route: String) {
     object FoodSearch : FoodScreens(route = "SEARCH")
     object FoodDetails : FoodScreens(route = "DETAILS")
+
+    object FoodFavorites : FoodScreens(route = "FOODFAVORITE")
     object MealPlannerCategory : FoodScreens(route = "PLANNERCATEGORY")
     object MealPlanGenerated : FoodScreens(route = "GENERATEDPLAN")
 }
@@ -61,8 +68,8 @@ sealed class WorkoutScreens(val route: String) {
 }
 
 sealed class RegisterScreens(val route: String) {
-    object GoalSetting : FoodScreens(route = "GOALS")
-    object ActivityLevelSetting : FoodScreens(route = "ACTIVITY")
-    object AboutYouSetting : FoodScreens(route = "ABOUTYOU")
-    object MealPlanGenerated : FoodScreens(route = "GENERATEDPLAN")
+    object GoalSetting : RegisterScreens(route = "GOALS")
+    object ActivityLevelSetting : RegisterScreens(route = "ACTIVITY")
+    object AboutYouSetting : RegisterScreens(route = "ABOUTYOU")
+    object RegisterScreen : RegisterScreens(route = "REGISTER")
 }

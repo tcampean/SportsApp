@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.sportsapp.api.SpoonacularAPI
 import com.example.sportsapp.data.Ingredient
 import com.example.sportsapp.data.Nutrients
+import com.example.sportsapp.data.Nutrition
+import com.example.sportsapp.database.MealDao
+import com.example.sportsapp.entity.FavoriteMealEntity
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +22,9 @@ class FoodDetailsViewModel : ViewModel() {
 
     private var isRequesting = false
     private var recipeID = -1
+    private lateinit var dao: MealDao
+    private var recipeUrl = ""
+    private lateinit var nutrition: Nutrition
 
     private val _image = MutableStateFlow(ImageBitmap(1, 1))
     val image = _image.asStateFlow()
@@ -53,8 +59,46 @@ class FoodDetailsViewModel : ViewModel() {
     private val _shouldDisplayProgressBar = MutableStateFlow(false)
     val shouldDisplayProgressBar = _shouldDisplayProgressBar.asStateFlow()
 
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite = _isFavorite.asStateFlow()
+
     fun setRecipeId(id: Int) {
         recipeID = id
+    }
+
+    fun setDao(d: MealDao) {
+        dao = d
+    }
+
+    fun checkIfFavorite() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = dao.findMeal(recipeID)
+            if (result.isNotEmpty()) {
+                _isFavorite.value = true
+            }
+        }
+    }
+
+    fun onSaveButtonPressed() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentMeal = FavoriteMealEntity(
+                _title.value,
+                recipeUrl,
+                ".jpg",
+                _servings.value,
+                _readyInMinutes.value,
+                _extendedIngredients.value,
+                _summary.value,
+                nutrition,
+                recipeID,
+            )
+            if (_isFavorite.value) {
+                dao.deleteFavoriteMeal(currentMeal)
+            } else {
+                dao.insertFavoriteMeal(currentMeal)
+            }
+            _isFavorite.value = !_isFavorite.value
+        }
     }
 
     fun requestRecipeDetails() {
@@ -69,11 +113,13 @@ class FoodDetailsViewModel : ViewModel() {
                 } catch (e: SocketTimeoutException) {
                     _image.value = ImageBitmap(1, 1)
                 }
+                recipeUrl = result.image
                 _title.value = result.title
                 _servings.value = result.servings
                 _readyInMinutes.value = result.readyInMinutes
                 _extendedIngredients.value = result.extendedIngredients
                 _summary.value = result.summary
+                nutrition = result.nutrition
                 setNutritionalValues(result.nutrition.nutrients)
                 isRequesting = false
                 _shouldDisplayProgressBar.value = false

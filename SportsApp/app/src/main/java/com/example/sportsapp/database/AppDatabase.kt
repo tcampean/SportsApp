@@ -11,7 +11,7 @@ import com.example.sportsapp.entity.WeekMealPlanEntity
 @Database(entities = [FavoriteMealEntity::class, DayMealPlanEntity::class, WeekMealPlanEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun productDao(): MealDao
+    abstract fun mealDao(): MealDao
 
     companion object {
 
@@ -23,7 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
                 value = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "bakery_database",
+                    "sporty_database",
                 )
                     .fallbackToDestructiveMigration()
                     .build()

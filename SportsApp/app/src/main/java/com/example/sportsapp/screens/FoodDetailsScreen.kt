@@ -1,12 +1,8 @@
 package com.example.sportsapp.screens
 
 import android.text.Html
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,24 +14,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.sportsapp.R
 import com.example.sportsapp.components.RoundTopCard
 import com.example.sportsapp.data.Ingredient
-import com.example.sportsapp.database.AppDatabase
-import com.example.sportsapp.database.MealDao
-import com.example.sportsapp.repository.MealRepository
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.FoodDetailsViewModel
 
 @Composable
-fun FoodDetailsScreen(viewModel: FoodDetailsViewModel, mealRepository: MealRepository = MealRepository(AppDatabase.getInstance(
-    LocalContext.current).productDao())) {
+fun FoodDetailsScreen(
+    viewModel: FoodDetailsViewModel,
+) {
     val image by viewModel.image.collectAsState()
     val title by viewModel.title.collectAsState()
     val serving by viewModel.servings.collectAsState()
@@ -47,8 +42,11 @@ fun FoodDetailsScreen(viewModel: FoodDetailsViewModel, mealRepository: MealRepos
     val protein by viewModel.protein.collectAsState()
     val fat by viewModel.fat.collectAsState()
     val carbs by viewModel.carbs.collectAsState()
+    val isFavorite by viewModel.isFavorite.collectAsState()
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
     LaunchedEffect(Unit) {
+        viewModel.checkIfFavorite()
         viewModel.requestRecipeDetails()
     }
     Box(
@@ -58,7 +56,12 @@ fun FoodDetailsScreen(viewModel: FoodDetailsViewModel, mealRepository: MealRepos
             .verticalScroll(rememberScrollState()),
     ) {
         if (shouldDisplayProgressBar) {
-            CircularProgressIndicator(Modifier.size(screenHeight / 8).align(Alignment.Center), color = SecondaryColor)
+            CircularProgressIndicator(
+                Modifier
+                    .size(screenHeight / 8)
+                    .align(Alignment.Center),
+                color = SecondaryColor,
+            )
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
@@ -77,13 +80,26 @@ fun FoodDetailsScreen(viewModel: FoodDetailsViewModel, mealRepository: MealRepos
                             .fillMaxWidth()
                             .padding(15.dp),
                     ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = title,
-                            color = PrimaryColorNavy,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                modifier = Modifier.weight(5f),
+                                text = title,
+                                color = PrimaryColorNavy,
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+
+                            Image(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .weight(1f)
+                                    .clickable {
+                                        viewModel.onSaveButtonPressed()
+                                    },
+                                painter = painterResource(id = if (isFavorite) R.drawable.heart_full else R.drawable.heart_empty),
+                                contentDescription = "favorite",
+                            )
+                        }
 
                         Text(
                             modifier = Modifier.fillMaxWidth(),
@@ -180,7 +196,7 @@ fun NutritionSection(modifier: Modifier, calories: Float, proteins: Float, fats:
                 text = "$calories kcal",
                 fontSize = 22.sp,
                 color = PrimaryColorNavy,
-                fontWeight =FontWeight.Light,
+                fontWeight = FontWeight.Light,
             )
         }
 
