@@ -51,28 +51,47 @@ fun RegisterScreen(navController: NavController = rememberNavController(), viewM
         buttonText = "REGISTER",
         buttonClick = {
             GlobalScope.launch(Dispatchers.IO) {
-                val result = MainAPI.retrofitService.register(
-                    RegisterData(
-                        username = viewModel.usernameInput.value,
-                        password = viewModel.passwordInput.value,
-                        goal = viewModel.selectedGoal.value,
-                        age = viewModel.ageInput.value.toInt(),
-                        height = viewModel.heightInput.value.toInt(),
-                        weight = viewModel.weightInput.value.toInt(),
-                        gender = viewModel.selectedGender.value,
-                        activity_level = viewModel.selectedActivity.value,
-                    ),
-                ).awaitResponse()
-                if (result.isSuccessful) {
-                    launch(Dispatchers.Main) {
-                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_LONG).show()
-                        navController.navigate(AppScreens.Splash.name) {
-                            popUpTo(0)
+                if (usernameInput.isNotEmpty() && usernameInput.length >= 4 && passwordInput.isNotEmpty() && passwordInput.length >= 4) {
+                    val result = MainAPI.retrofitService.register(
+                        RegisterData(
+                            username = viewModel.usernameInput.value,
+                            password = viewModel.passwordInput.value,
+                            goal = viewModel.selectedGoal.value,
+                            age = viewModel.ageInput.value.toInt(),
+                            height = viewModel.heightInput.value.toInt(),
+                            weight = viewModel.weightInput.value.toInt(),
+                            gender = viewModel.selectedGender.value,
+                            activity_level = viewModel.selectedActivity.value,
+                        ),
+                    ).awaitResponse()
+                    if (result.isSuccessful) {
+                        launch(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                "Account created successfully!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            navController.navigate(AppScreens.Splash.name) {
+                                popUpTo(0)
+                            }
+                        }
+                    } else {
+                        launch(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                "This username already exists!",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
                         }
                     }
                 } else {
                     launch(Dispatchers.Main) {
-                        Toast.makeText(context, "This username already exists!", Toast.LENGTH_LONG)
+                        Toast.makeText(
+                            context,
+                            "The fields must not be empty and must be at least 4 characters long!",
+                            Toast.LENGTH_LONG
+                        )
                             .show()
                     }
                 }
