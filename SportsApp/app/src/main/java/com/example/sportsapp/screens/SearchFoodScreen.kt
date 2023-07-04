@@ -2,7 +2,6 @@ package com.example.sportsapp.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,10 +18,10 @@ import com.example.sportsapp.components.*
 import com.example.sportsapp.data.Recipe
 import com.example.sportsapp.navigation.FoodScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
-import com.example.sportsapp.viewmodels.SearchViewModel
+import com.example.sportsapp.viewmodels.SearchFoodViewModel
 
 @Composable
-fun SearchFoodScreen(navController: NavController = rememberNavController(), viewModel: SearchViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun SearchFoodScreen(navController: NavController = rememberNavController(), viewModel: SearchFoodViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val resultList by viewModel.recipeList.collectAsState()
     val searchText by viewModel.searchText.collectAsState()
     Box(
@@ -31,6 +30,7 @@ fun SearchFoodScreen(navController: NavController = rememberNavController(), vie
     ) {
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             SearchBar(
+                searchLabel = "Search foods...",
                 searchText = searchText,
                 onTextChange = {
                     viewModel.setSearchText(it)
@@ -40,7 +40,7 @@ fun SearchFoodScreen(navController: NavController = rememberNavController(), vie
                 },
             )
 
-            PaginatedRecipeLazyColumn(
+            PaginatedLazyColumn(
                 resultList,
                 itemLayout = {
                     SearchFoodItem(title = (it as Recipe).title, imageUrl = it.image, onClick = {
@@ -57,7 +57,7 @@ fun SearchFoodScreen(navController: NavController = rememberNavController(), vie
 }
 
 @Composable
-fun SearchBar(searchText: String, onTextChange: (String) -> Unit = {}, onSearchButtonClicked: () -> Unit = {}, onFilterResultsClicked: () -> Unit = {}) {
+fun SearchBar(searchLabel: String = "", searchText: String, onTextChange: (String) -> Unit = {}, onSearchButtonClicked: () -> Unit = {}) {
     val screenSize = LocalConfiguration.current.screenHeightDp.dp
     RoundBottomCard(
         modifier = Modifier.fillMaxWidth(),
@@ -73,7 +73,7 @@ fun SearchBar(searchText: String, onTextChange: (String) -> Unit = {}, onSearchB
             SearchBarTextField(
                 modifier = Modifier.weight(1f),
                 value = searchText,
-                label = "Search foods...",
+                label = searchLabel,
                 textStyle = TextStyle.Default,
                 onValueChange = { onTextChange(it) },
             )

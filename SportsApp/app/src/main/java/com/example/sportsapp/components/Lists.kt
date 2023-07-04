@@ -26,20 +26,66 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.sportsapp.R
 import com.example.sportsapp.data.Exercise
-import com.example.sportsapp.data.Recipe
+import com.example.sportsapp.entity.FavoriteMealEntity
 import com.example.sportsapp.navigation.FoodScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
 
 @Composable
-fun PaginatedRecipeLazyColumn(itemList: List<Any>, itemLayout: @Composable (item: Any) -> Unit, onScrollToEnd: () -> Unit) {
+fun PaginatedLazyColumn(itemList: List<Any>, itemLayout: @Composable (item: Any) -> Unit, onScrollToEnd: () -> Unit) {
     val listState = rememberLazyListState()
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), state = listState) {
         items(items = itemList) {
             itemLayout(it)
+        }
+
+        if (listState.isScrolledToTheEnd()) {
+            onScrollToEnd()
+        }
+    }
+}
+
+@Composable
+fun FavoriteMealLazyColumn(itemList: List<FavoriteMealEntity>, onItemClick: (FavoriteMealEntity) -> Unit, onDeleteClick: (FavoriteMealEntity) -> Unit, onScrollToEnd: () -> Unit) {
+    val listState = rememberLazyListState()
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), state = listState) {
+        items(items = itemList) {
+            BaseCard(
+                modifier = Modifier.fillMaxWidth().clickable {
+                    onItemClick(it)
+                },
+                cornerSize = 0,
+                backgroundColor = Color.White,
+            ) {
+                Row {
+                    Box(modifier = Modifier.weight(5f), contentAlignment = Alignment.Center) {
+                        Text(
+                            modifier = Modifier.padding(
+                                top = 5.dp,
+                                start = 10.dp,
+                                end = 5.dp,
+                                bottom = 5.dp,
+                            ).align(Alignment.Center),
+                            text = it.title,
+                            color = PrimaryColorNavy,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 24.sp,
+                            overflow = TextOverflow.Visible,
+                        )
+                    }
+
+                    Image(
+                        modifier = Modifier.size(30.dp).align(Alignment.CenterVertically).weight(1f)
+                            .clickable { onDeleteClick(it) },
+                        painter = painterResource(id = R.drawable.baseline_delete_24),
+                        contentDescription = "delete",
+                    )
+                }
+            }
         }
 
         if (listState.isScrolledToTheEnd()) {
@@ -96,7 +142,43 @@ fun SearchFoodItem(title: String, imageUrl: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun SearchFoodItemNoPicture(title: String, onClick: () -> Unit, onDeleteClick: () -> Unit) {
+fun SearchFoodItemNoPicture(meal: FavoriteMealEntity, onClick: () -> Unit, onDeleteClick: () -> Unit) {
+    BaseCard(
+        modifier = Modifier.fillMaxWidth().clickable {
+            onClick()
+        },
+        cornerSize = 0,
+        backgroundColor = Color.White,
+    ) {
+        Row {
+            Box(modifier = Modifier.weight(5f), contentAlignment = Alignment.Center) {
+                Text(
+                    modifier = Modifier.padding(
+                        top = 5.dp,
+                        start = 10.dp,
+                        end = 5.dp,
+                        bottom = 5.dp,
+                    ).align(Alignment.Center),
+                    text = meal.title,
+                    color = PrimaryColorNavy,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 24.sp,
+                    overflow = TextOverflow.Visible,
+                )
+            }
+
+            Image(
+                modifier = Modifier.size(30.dp).align(Alignment.CenterVertically).weight(1f)
+                    .clickable { onDeleteClick() },
+                painter = painterResource(id = R.drawable.baseline_delete_24),
+                contentDescription = "delete",
+            )
+        }
+    }
+}
+
+@Composable
+fun SavedMealPlanItem(title: String, onClick: () -> Unit, onDeleteClick: () -> Unit) {
     BaseCard(
         modifier = Modifier.fillMaxWidth().clickable {
             onClick()
@@ -121,8 +203,12 @@ fun SearchFoodItemNoPicture(title: String, onClick: () -> Unit, onDeleteClick: (
                 )
             }
 
-            Image(modifier = Modifier.size(30.dp).align(Alignment.CenterVertically).weight(1f)
-                .clickable { onDeleteClick() }, painter = painterResource(id = R.drawable.baseline_delete_24), contentDescription = "delete")
+            Image(
+                modifier = Modifier.size(30.dp).align(Alignment.CenterVertically).weight(1f)
+                    .clickable { onDeleteClick() },
+                painter = painterResource(id = R.drawable.baseline_delete_24),
+                contentDescription = "delete",
+            )
         }
     }
 }

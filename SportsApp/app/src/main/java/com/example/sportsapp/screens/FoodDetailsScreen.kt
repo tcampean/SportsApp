@@ -64,14 +64,16 @@ fun FoodDetailsScreen(
             )
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(screenHeight / 4),
-                    bitmap = image,
-                    contentDescription = "food image",
-                    contentScale = ContentScale.FillBounds,
-                )
+                if (image != null) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(screenHeight / 4),
+                        bitmap = image!!,
+                        contentDescription = "food image",
+                        contentScale = ContentScale.FillBounds,
+                    )
+                }
                 Spacer(modifier = Modifier.size(20.dp))
 
                 RoundTopCard(modifier = Modifier.fillMaxWidth(), backgroundColor = Color.White) {

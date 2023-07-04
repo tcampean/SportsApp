@@ -55,8 +55,10 @@ fun NavGraphBuilder.registrationGraph(navController: NavController) {
 sealed class FoodScreens(val route: String) {
     object FoodSearch : FoodScreens(route = "SEARCH")
     object FoodDetails : FoodScreens(route = "DETAILS")
-
     object FoodFavorites : FoodScreens(route = "FOODFAVORITE")
+
+    object SavedMealPlanScreen : FoodScreens(route = "SAVEDPLANVIEW")
+    object SaveMealPlans : FoodScreens(route = "SAVEDPLANS")
     object MealPlannerCategory : FoodScreens(route = "PLANNERCATEGORY")
     object MealPlanGenerated : FoodScreens(route = "GENERATEDPLAN")
 }
@@ -65,6 +67,10 @@ sealed class WorkoutScreens(val route: String) {
     object ExerciseDifficulty : WorkoutScreens(route = "EXERCISEDIFFICULTY")
     object ExerciseMuscleGroupSelection : WorkoutScreens(route = "EXERCISEMUSCLESELECTION")
     object ExerciseResults : WorkoutScreens(route = "EXERCISERESULTS")
+
+    object ExerciseSearch : WorkoutScreens(route = "EXERCISESEARCH")
+    object ExerciseSaved : WorkoutScreens(route = "EXERCISESAVED")
+    object ExerciseDetails : WorkoutScreens(route = "EXERCISEDETAILS")
 }
 
 sealed class RegisterScreens(val route: String) {

@@ -47,11 +47,27 @@ fun FoodScreen(navController: NavHostController = rememberNavController()) {
                 rightCard = {
                     ActionCard(
                         modifier = Modifier.weight(1f),
-                        label = "Favorites",
-                        icon = R.drawable.baseline_star_24,
+                        label = "Favorite Meals",
+                        icon = R.drawable.dinner_favorite,
                         onClick = {
                             navController.navigate(FoodScreens.FoodFavorites.route)
-                        }
+                        },
+                    )
+                },
+            )
+
+            PairedCards(
+                leftCard = {
+                    Spacer(modifier = Modifier.weight(1f))
+                },
+                rightCard = {
+                    ActionCard(
+                        modifier = Modifier.weight(1f),
+                        label = "Your Meal Plans",
+                        icon = R.drawable.baseline_star_24,
+                        onClick = {
+                            navController.navigate(FoodScreens.SaveMealPlans.route)
+                        },
                     )
                 },
             )

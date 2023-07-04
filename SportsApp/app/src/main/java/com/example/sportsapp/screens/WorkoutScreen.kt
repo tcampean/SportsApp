@@ -32,7 +32,7 @@ fun WorkoutScreen(navController: NavHostController = rememberNavController()) {
         Column(Modifier.padding(30.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             ActionCardLong(
                 modifier = Modifier.fillMaxWidth(),
-                color = Color.Transparent,
+                color = PrimaryColorNavy,
                 borderColor = Color.White,
                 label = "Discover exercises",
                 textColor = Color.White,
@@ -45,18 +45,21 @@ fun WorkoutScreen(navController: NavHostController = rememberNavController()) {
                 leftCard = {
                     ActionCard(
                         modifier = Modifier.weight(1f),
-                        label = "Search Foods",
+                        label = "Search Exercises",
                         icon = R.drawable.baseline_search_24,
                         onClick = {
-                            navController.navigate(FoodScreens.FoodSearch.route)
+                            navController.navigate(WorkoutScreens.ExerciseSearch.route)
                         },
                     )
                 },
                 rightCard = {
                     ActionCard(
                         modifier = Modifier.weight(1f),
-                        label = "Favorites",
+                        label = "Saved Exercises",
                         icon = R.drawable.baseline_star_24,
+                        onClick = {
+                            navController.navigate(WorkoutScreens.ExerciseSaved.route)
+                        },
                     )
                 },
             )

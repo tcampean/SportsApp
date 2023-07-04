@@ -1,5 +1,6 @@
 package com.example.sportsapp.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,11 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.sportsapp.components.BaseCard
+import com.example.sportsapp.components.CustomDialog
 import com.example.sportsapp.components.RoundBottomCard
 import com.example.sportsapp.data.DayPlan
 import com.example.sportsapp.data.Meal
@@ -39,12 +42,19 @@ import com.example.sportsapp.ui.theme.LoginFormTypography
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.MealPlanViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun MealPlanScreen(navController: NavController = rememberNavController(), viewModel: MealPlanViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+    val context = LocalContext.current
+
     val shouldDisplayProgressBar by viewModel.shouldDisplayProgressBar.collectAsState()
     val currentDayMealPlan by viewModel.currentDayMealPlan.collectAsState()
     val currentWeekMealPlan by viewModel.currentWeekMealPlan.collectAsState()
+    val shouldDisplaySaveDialog by viewModel.shouldDisplaySaveDialog.collectAsState()
+    val saveNameText by viewModel.saveName.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.generateNewMealPlan()
@@ -64,6 +74,32 @@ fun MealPlanScreen(navController: NavController = rememberNavController(), viewM
                 color = SecondaryColor,
             )
         } else {
+            if (shouldDisplaySaveDialog) {
+                CustomDialog(
+                    title = "Name your meal plan",
+                    value = saveNameText,
+                    setShowDialog = {
+                        viewModel.setDialogVisibility(it)
+                    },
+                    setValue = { viewModel.setSaveName(it) },
+                    onSaveClicked = {
+                        GlobalScope.launch {
+                            if (viewModel.checkIfExists()) {
+                                viewModel.saveMealPlan()
+                                viewModel.setDialogVisibility(false)
+                            } else {
+                                launch(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        context,
+                                        "There is already a plan with this name",
+                                        Toast.LENGTH_LONG,
+                                    ).show()
+                                }
+                            }
+                        }
+                    },
+                )
+            }
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -84,6 +120,9 @@ fun MealPlanScreen(navController: NavController = rememberNavController(), viewM
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
+                            modifier = Modifier.clickable {
+                                viewModel.setDialogVisibility(true)
+                            },
                             text = "Save",
                             style = LoginFormTypography.body1,
                         )

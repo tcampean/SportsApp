@@ -41,7 +41,7 @@ fun ExerciseMuscleSelection(navController: NavController = rememberNavController
                     MuscleGroupItemCard(
                         modifier = Modifier,
                         muscleGroup = "Biceps",
-                        resource =R.drawable.intermediate_difficulty,
+                        resource = R.drawable.intermediate_difficulty,
                     ) {
                         viewModel.setMuscle("biceps")
                         navController.navigate(WorkoutScreens.ExerciseResults.route)

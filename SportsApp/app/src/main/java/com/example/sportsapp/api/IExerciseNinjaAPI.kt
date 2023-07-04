@@ -16,4 +16,11 @@ interface IExerciseNinjaAPI {
         @Query("difficulty") difficulty: String,
         @Query("offset") offset: Int,
     ): Call<List<Exercise>>
+
+    @GET("/v1/exercises")
+    fun getExercisesByName(
+        @Header("x-api-key") apiKey: String = "L6IlWHXrG97B2tHAlogqKsrlIJwf3k0gPI3a5djd",
+        @Query("name") name: String,
+        @Query("offset") offset: Int,
+    ): Call<List<Exercise>>
 }

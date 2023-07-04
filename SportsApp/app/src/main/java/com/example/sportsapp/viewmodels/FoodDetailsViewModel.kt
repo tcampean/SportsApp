@@ -8,6 +8,7 @@ import com.example.sportsapp.api.SpoonacularAPI
 import com.example.sportsapp.data.Ingredient
 import com.example.sportsapp.data.Nutrients
 import com.example.sportsapp.data.Nutrition
+import com.example.sportsapp.data.RecipeDetailed
 import com.example.sportsapp.database.MealDao
 import com.example.sportsapp.entity.FavoriteMealEntity
 import com.squareup.picasso.Picasso
@@ -22,11 +23,12 @@ class FoodDetailsViewModel : ViewModel() {
 
     private var isRequesting = false
     private var recipeID = -1
+    private var isLocal = false
     private lateinit var dao: MealDao
     private var recipeUrl = ""
     private lateinit var nutrition: Nutrition
 
-    private val _image = MutableStateFlow(ImageBitmap(1, 1))
+    private val _image = MutableStateFlow<ImageBitmap?>(ImageBitmap(1, 1))
     val image = _image.asStateFlow()
 
     private val _title = MutableStateFlow("")
@@ -79,6 +81,19 @@ class FoodDetailsViewModel : ViewModel() {
         }
     }
 
+    fun setCurrentRecipe(recipe: RecipeDetailed) {
+        recipeID = recipe.id
+        recipeUrl = recipe.image
+        _title.value = recipe.title
+        _servings.value = recipe.servings
+        _readyInMinutes.value = recipe.readyInMinutes
+        _extendedIngredients.value = recipe.extendedIngredients
+        _summary.value = recipe.summary
+        nutrition = recipe.nutrition
+        setNutritionalValues(recipe.nutrition.nutrients)
+        isLocal = true
+    }
+
     fun onSaveButtonPressed() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentMeal = FavoriteMealEntity(
@@ -102,7 +117,9 @@ class FoodDetailsViewModel : ViewModel() {
     }
 
     fun requestRecipeDetails() {
-        if (!isRequesting) {
+        println("GOT INTO EXCEPTION")
+        if (!isRequesting && !isLocal) {
+            println("doing the request")
             _shouldDisplayProgressBar.value = true
             isRequesting = true
             viewModelScope.launch(Dispatchers.IO) {
@@ -111,7 +128,7 @@ class FoodDetailsViewModel : ViewModel() {
                     val bitmap = Picasso.get().load(result.image).get()
                     _image.value = bitmap.asImageBitmap()
                 } catch (e: SocketTimeoutException) {
-                    _image.value = ImageBitmap(1, 1)
+                    _image.value = null
                 }
                 recipeUrl = result.image
                 _title.value = result.title
@@ -122,6 +139,21 @@ class FoodDetailsViewModel : ViewModel() {
                 nutrition = result.nutrition
                 setNutritionalValues(result.nutrition.nutrients)
                 isRequesting = false
+                _shouldDisplayProgressBar.value = false
+            }
+        } else if (isLocal) {
+            viewModelScope.launch(Dispatchers.IO) {
+                _shouldDisplayProgressBar.value = true
+                println("GOT INTO EXCEPTION 2")
+                println("GOT INTO EXCEPTION 3")
+                try {
+                    val result = SpoonacularAPI.retrofitService.getRecipeDetails(recipeID).await()
+                    val bitmap = Picasso.get().load(result.image).get()
+                    _image.value = bitmap.asImageBitmap()
+                } catch (e: Exception) {
+                    println("GOT INTO EXCEPTION" + e.message)
+                    _image.value = null
+                }
                 _shouldDisplayProgressBar.value = false
             }
         }

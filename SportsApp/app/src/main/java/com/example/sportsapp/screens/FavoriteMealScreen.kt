@@ -15,9 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.sportsapp.components.PaginatedRecipeLazyColumn
+import com.example.sportsapp.components.FavoriteMealLazyColumn
 import com.example.sportsapp.components.RoundBottomCard
-import com.example.sportsapp.components.SearchFoodItemNoPicture
+import com.example.sportsapp.data.RecipeDetailed
 import com.example.sportsapp.entity.FavoriteMealEntity
 import com.example.sportsapp.navigation.FoodScreens
 import com.example.sportsapp.ui.theme.LoginFormTypography
@@ -27,6 +27,7 @@ import com.example.sportsapp.viewmodels.FavoriteMealViewModel
 @Composable
 fun FavoriteMealScreen(navController: NavController = rememberNavController(), viewModel: FavoriteMealViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val favoriteMeals by viewModel.favoriteMeals.collectAsState()
+    val refreshFlag by viewModel.refreshFlag.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.observeFavoriteMeals()
@@ -54,22 +55,22 @@ fun FavoriteMealScreen(navController: NavController = rememberNavController(), v
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            PaginatedRecipeLazyColumn(
-                itemList = favoriteMeals,
-                itemLayout = {
-                    val meal = it as FavoriteMealEntity
-                    SearchFoodItemNoPicture(
-                        title = meal.title,
-                        onClick = {
-                            navController.currentBackStackEntry?.arguments?.putInt("ID", meal.id)
-                            navController.navigate(route = FoodScreens.FoodDetails.route)
-                        },
-                        onDeleteClick = {
-                            viewModel.onDeleteClick(meal)
-                        },
-                    )
-                },
-            ) {
+            if(!refreshFlag) {
+                FavoriteMealLazyColumn(
+                    itemList = favoriteMeals,
+                    onItemClick = {
+                        navController.currentBackStackEntry?.arguments?.putParcelable("meal", RecipeDetailed(it.id, it.title, it.image, it.imageType, it.servings, it.readyInMinutes, it.extendedIngredients, it.summary, it.nutrition))
+                        navController.navigate(route = FoodScreens.FoodDetails.route)
+                    },
+                    onDeleteClick = {
+                        viewModel.onDeleteClick(it)
+                        viewModel.triggerRefreshFlag()
+                    },
+
+                    onScrollToEnd = {},
+                )
+            } else {
+                viewModel.triggerRefreshFlag()
             }
         }
     }

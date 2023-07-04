@@ -13,7 +13,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.sportsapp.components.PaginatedExerciseLazyColumn
+import com.example.sportsapp.components.ExerciseItem
+import com.example.sportsapp.components.PaginatedLazyColumn
+import com.example.sportsapp.data.Exercise
+import com.example.sportsapp.navigation.WorkoutScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.ExerciseViewModel
@@ -24,8 +27,10 @@ fun ExerciseResultScreen(navController: NavController = rememberNavController(),
     val exerciseList by viewModel.exerciseList.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.offset = 0
-        viewModel.getExercises()
+        if (exerciseList.isEmpty()) {
+            viewModel.offset = 0
+            viewModel.getExercises()
+        }
     }
 
     Box(
@@ -41,8 +46,19 @@ fun ExerciseResultScreen(navController: NavController = rememberNavController(),
                 color = SecondaryColor,
             )
         } else {
-            PaginatedExerciseLazyColumn(navController = navController, itemList = exerciseList) {
-                viewModel.requestDataAppend()
+            Column(modifier = Modifier.fillMaxSize().padding(15.dp)) {
+                PaginatedLazyColumn(
+                    itemList = exerciseList,
+                    itemLayout = {
+                        val exercise = it as Exercise
+                        ExerciseItem(exercise = exercise, onClick = {
+                            viewModel.setCurrentExercise(exercise)
+                            navController.navigate(WorkoutScreens.ExerciseDetails.route)
+                        })
+                    },
+                ) {
+                    viewModel.requestDataAppend()
+                }
             }
         }
     }

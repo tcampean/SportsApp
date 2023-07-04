@@ -4,14 +4,17 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.sportsapp.entity.DayMealPlanEntity
-import com.example.sportsapp.entity.FavoriteMealEntity
-import com.example.sportsapp.entity.WeekMealPlanEntity
+import com.example.sportsapp.entity.*
 
-@Database(entities = [FavoriteMealEntity::class, DayMealPlanEntity::class, WeekMealPlanEntity::class], version = 1)
+@Database(entities = [FavoriteMealEntity::class, DayMealPlanEntity::class, WeekMealPlanEntity::class, ExerciseEntity::class, UserDataEntity::class], version = 8)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun mealDao(): MealDao
+    abstract fun mealPlanDao(): MealPlanDao
+
+    abstract fun exerciseDao(): ExerciseDao
+
+    abstract fun userDao(): UserDao
 
     companion object {
 

@@ -1,6 +1,5 @@
 package com.example.sportsapp.navigation
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -11,13 +10,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.sportsapp.data.BottomBarScreen
+import com.example.sportsapp.data.Exercise
+import com.example.sportsapp.data.RecipeDetailed
 import com.example.sportsapp.database.AppDatabase
+import com.example.sportsapp.repository.ExerciseRepository
+import com.example.sportsapp.repository.MealPlanRepository
 import com.example.sportsapp.repository.MealRepository
 import com.example.sportsapp.screens.*
-import com.example.sportsapp.viewmodels.ExerciseViewModel
-import com.example.sportsapp.viewmodels.FavoriteMealViewModel
-import com.example.sportsapp.viewmodels.FoodDetailsViewModel
-import com.example.sportsapp.viewmodels.MealPlanViewModel
+import com.example.sportsapp.viewmodels.*
 
 @Composable
 fun MainNavGraph(navController: NavHostController) {
@@ -27,13 +27,18 @@ fun MainNavGraph(navController: NavHostController) {
         startDestination = BottomBarScreen.Home.route,
     ) {
         composable(route = BottomBarScreen.Home.route) {
-            Text(text = BottomBarScreen.Home.route)
+            val vm: HomeViewModel = viewModel()
+            HomeScreen(navController, vm)
         }
         composable(route = BottomBarScreen.Workouts.route) {
             WorkoutScreen(navController)
         }
         composable(route = BottomBarScreen.Food.route) {
             FoodScreen(navController)
+        }
+
+        composable(route = AppScreens.Splash.name) {
+            SplashScreen(navController = navController)
         }
 
         foodNavGraph(navController)
@@ -43,6 +48,7 @@ fun MainNavGraph(navController: NavHostController) {
 
 fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
     val mealPlanViewModel = MealPlanViewModel()
+    val favoriteMealPlanViewModel = FavoriteMealPlanViewModel()
 
     navigation(
         route = Graph.FOOD,
@@ -53,11 +59,22 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
         }
 
         composable(route = FoodScreens.FoodDetails.route) {
+            val viewModel: FoodDetailsViewModel = viewModel()
             val id = remember {
                 navController.previousBackStackEntry?.arguments?.getInt("ID")
             }
-            val viewModel: FoodDetailsViewModel = viewModel()
-            viewModel.setRecipeId(id!!)
+
+            var meal: RecipeDetailed
+
+            if (id == 0) {
+                meal = remember {
+                    navController.previousBackStackEntry?.arguments?.getParcelable("meal")!!
+                }
+                viewModel.setCurrentRecipe(meal)
+                println("got here")
+            } else {
+                viewModel.setRecipeId(id!!)
+            }
             viewModel.setDao(AppDatabase.getInstance(LocalContext.current).mealDao())
             FoodDetailsScreen(viewModel = viewModel)
         }
@@ -67,6 +84,7 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
         }
 
         composable(route = FoodScreens.MealPlanGenerated.route) {
+            mealPlanViewModel.setDao(AppDatabase.getInstance(LocalContext.current).mealPlanDao())
             MealPlanScreen(navController, mealPlanViewModel)
         }
 
@@ -75,11 +93,21 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
             viewModel.setRepository(MealRepository(AppDatabase.getInstance(LocalContext.current).mealDao()))
             FavoriteMealScreen(navController, viewModel)
         }
+
+        composable(route = FoodScreens.SaveMealPlans.route) {
+            favoriteMealPlanViewModel.setRepository(MealPlanRepository(AppDatabase.getInstance(LocalContext.current).mealPlanDao()))
+            FavoriteMealPlanScreen(navController, favoriteMealPlanViewModel)
+        }
+
+        composable(route = FoodScreens.SavedMealPlanScreen.route) {
+            FavoriteMealPlanDisplayScreen(navController, favoriteMealPlanViewModel)
+        }
     }
 }
 
 fun NavGraphBuilder.workoutNavGraph(navController: NavHostController) {
     val exerciseViewModel = ExerciseViewModel()
+    val favoriteExerciseViewModel = FavoriteExerciseViewModel()
 
     navigation(
         route = Graph.WORKOUT,
@@ -95,6 +123,26 @@ fun NavGraphBuilder.workoutNavGraph(navController: NavHostController) {
 
         composable(route = WorkoutScreens.ExerciseResults.route) {
             ExerciseResultScreen(navController, exerciseViewModel)
+        }
+
+        composable(route = WorkoutScreens.ExerciseDetails.route) {
+            exerciseViewModel.dao = AppDatabase.getInstance(LocalContext.current).exerciseDao()
+            var exercise: Exercise? = remember {
+                navController.previousBackStackEntry?.arguments?.getParcelable("exercise")
+            }
+            if (exercise != null) {
+                exerciseViewModel.setCurrentExercise(exercise)
+            }
+            ExerciseDetailsScreen(exerciseViewModel)
+        }
+
+        composable(route = WorkoutScreens.ExerciseSaved.route) {
+            favoriteExerciseViewModel.setRepository(ExerciseRepository(AppDatabase.getInstance(LocalContext.current).exerciseDao()))
+            FavoriteExerciseScreen(navController, favoriteExerciseViewModel)
+        }
+
+        composable(route = WorkoutScreens.ExerciseSearch.route) {
+            ExerciseSearchScreen(navController)
         }
     }
 }

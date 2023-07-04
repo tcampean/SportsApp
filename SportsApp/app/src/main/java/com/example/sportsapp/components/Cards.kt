@@ -85,7 +85,7 @@ fun ActionCard(modifier: Modifier = Modifier, label: String, color: Color = Colo
         backgroundColor = color,
         border = BorderStroke(borderWidth.dp, borderColor),
     ) {
-        Box(modifier = Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize().padding(10.dp), contentAlignment = Alignment.Center) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,6 +105,7 @@ fun ActionCardLong(modifier: Modifier = Modifier, label: String, color: Color = 
         shape = RoundedCornerShape(CornerSize(20.dp)),
         backgroundColor = color,
         border = BorderStroke(borderWidth.dp, borderColor),
+        elevation = 0.dp,
     ) {
         Box(modifier = Modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.TopStart) {
             Row(modifier = Modifier.fillMaxHeight()) {

@@ -59,7 +59,7 @@ fun SearchBarTextField(modifier: Modifier = Modifier, value: String, label: Stri
 }
 
 @Composable
-fun InputTextField(modifier: Modifier = Modifier, value: String, placeholder: String = "", textStyle: TextStyle, onValueChange: (String) -> Unit = {}, textFieldColors: TextFieldColors, keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text), keyboardActions: KeyboardActions = KeyboardActions { }, visualTransformation: VisualTransformation = VisualTransformation.None) {
+fun InputTextField(modifier: Modifier = Modifier, value: String, placeholder: String = "", textStyle: TextStyle = TextStyle.Default, onValueChange: (String) -> Unit = {}, textFieldColors: TextFieldColors, keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text), keyboardActions: KeyboardActions = KeyboardActions { }, visualTransformation: VisualTransformation = VisualTransformation.None) {
     OutlinedTextField(
         modifier = modifier,
         value = value,

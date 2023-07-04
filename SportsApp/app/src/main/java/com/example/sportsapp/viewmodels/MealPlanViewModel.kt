@@ -4,17 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsapp.R
 import com.example.sportsapp.api.SpoonacularAPI
-import com.example.sportsapp.data.DayPlan
-import com.example.sportsapp.data.MealPlanCategory
-import com.example.sportsapp.data.MealPlanNutrients
-import com.example.sportsapp.data.Week
-import com.example.sportsapp.data.WeekPlan
+import com.example.sportsapp.data.*
+import com.example.sportsapp.database.MealPlanDao
+import com.example.sportsapp.entity.DayMealPlanEntity
+import com.example.sportsapp.entity.WeekMealPlanEntity
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import retrofit2.await
 
 class MealPlanViewModel : ViewModel() {
+
+    private lateinit var dao: MealPlanDao
+
     val mealPlanCategories = listOf(
         MealPlanCategory("Gluten Free", R.drawable.gluten_free_card_image),
         MealPlanCategory("Ketogenic", R.drawable.keto_card_image),
@@ -47,10 +49,27 @@ class MealPlanViewModel : ViewModel() {
     private val _shouldDisplayProgressBar = MutableStateFlow(false)
     val shouldDisplayProgressBar = _shouldDisplayProgressBar.asStateFlow()
 
+    private val _shouldDisplaySaveDialog = MutableStateFlow(false)
+    val shouldDisplaySaveDialog = _shouldDisplaySaveDialog.asStateFlow()
+
+    private val _saveName = MutableStateFlow("")
+    val saveName = _saveName.asStateFlow()
+
     private var mealPlanLength = ""
     private var selectedDiet = ""
     private var generationLocked = false
 
+    fun setDao(mealPlanDao: MealPlanDao) {
+        dao = mealPlanDao
+    }
+
+    fun setDialogVisibility(visible: Boolean) {
+        _shouldDisplaySaveDialog.value = visible
+    }
+
+    fun setSaveName(name: String) {
+        _saveName.value = name
+    }
     fun setMealPlanLength(length: String) {
         mealPlanLength = length
     }
@@ -65,6 +84,63 @@ class MealPlanViewModel : ViewModel() {
 
     fun isMealPlanLengthDay(): Boolean {
         return mealPlanLength == "day"
+    }
+
+    fun saveMealPlan() {
+        if (isMealPlanLengthDay()) {
+            saveDayMealPlan()
+        } else {
+            saveWeekMealPlan()
+        }
+    }
+
+    private fun saveDayMealPlan() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val recipeDetails = mutableListOf<RecipeDetailed>()
+            val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+            val requests = _currentDayMealPlan.value.meals.map { meal ->
+                coroutineScope.async {
+                    val response =
+                        SpoonacularAPI.retrofitService.getRecipeDetails(meal.id).execute()
+                    if (response.isSuccessful) {
+                        val recipeDetail = response.body()
+                        if (recipeDetail != null) {
+                            recipeDetails.add(recipeDetail)
+                        }
+                    }
+                }
+            }
+
+            requests.awaitAll()
+
+            dao.insertDayMealPlan(DayMealPlanEntity(_saveName.value, recipeDetails, _currentDayMealPlan.value.nutrients))
+        }
+    }
+
+    private fun saveWeekMealPlan() {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.insertWeekMealPlan(
+                WeekMealPlanEntity(
+                    _saveName.value,
+                    _currentWeekMealPlan.value.week.monday,
+                    _currentWeekMealPlan.value.week.tuesday,
+                    _currentWeekMealPlan.value.week.wednesday,
+                    _currentWeekMealPlan.value.week.thursday,
+                    _currentWeekMealPlan.value.week.friday,
+                    _currentWeekMealPlan.value.week.saturday,
+                    _currentWeekMealPlan.value.week.sunday,
+                ),
+            )
+            println("Saved in database")
+        }
+    }
+
+    suspend fun checkIfExists(): Boolean {
+        if (isMealPlanLengthDay()) {
+            return dao.findDayMealPlan(_saveName.value).isEmpty()
+        }
+        return dao.findWeekMealPlan(_saveName.value).isEmpty()
     }
 
     fun generateNewMealPlan() {
