@@ -114,7 +114,9 @@ fun MealPlanScreen(navController: NavController = rememberNavController(), viewM
                             .padding(10.dp),
                     ) {
                         Text(
-                            modifier = Modifier.clickable { viewModel.generateNewMealPlan() },
+                            modifier = Modifier.clickable {
+                                viewModel.unlockGeneration()
+                                viewModel.generateNewMealPlan() },
                             text = "New Plan",
                             style = LoginFormTypography.body1,
                         )

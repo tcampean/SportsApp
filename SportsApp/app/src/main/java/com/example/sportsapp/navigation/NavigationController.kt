@@ -1,6 +1,7 @@
 package com.example.sportsapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
@@ -8,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.sportsapp.screens.*
-import com.example.sportsapp.viewmodels.LoginViewModel
 import com.example.sportsapp.viewmodels.RegisterViewModel
 
 @Composable
@@ -16,8 +16,7 @@ fun NavigationController() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = AppScreens.Splash.name) {
         composable(AppScreens.Splash.name) {
-            val viewModel = LoginViewModel()
-            SplashScreen(navController = navController, viewModel)
+            SplashScreen(navController)
         }
 
         composable(Graph.HOME) {
@@ -43,11 +42,11 @@ fun NavGraphBuilder.registrationGraph(navController: NavController) {
         }
 
         composable(route = RegisterScreens.AboutYouSetting.route) {
-           AboutYouScreen(navController, registerViewModel)
+            AboutYouScreen(navController, registerViewModel)
         }
 
         composable(route = RegisterScreens.RegisterScreen.route) {
-           RegisterScreen(navController, registerViewModel)
+            RegisterScreen(navController, registerViewModel)
         }
     }
 }

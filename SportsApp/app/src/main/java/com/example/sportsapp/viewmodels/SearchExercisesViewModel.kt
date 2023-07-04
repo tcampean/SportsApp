@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.await
 
-class SearchExercisesViewModel() : ViewModel() {
+class SearchExercisesViewModel : ViewModel() {
 
     var offset = 0
     private var isRequesting = false
@@ -23,6 +23,11 @@ class SearchExercisesViewModel() : ViewModel() {
     private val _exerciseList = MutableStateFlow(listOf<Exercise>())
     val exerciseList = _exerciseList.asStateFlow()
 
+    private val _shouldDisplayProgressBar = MutableStateFlow(false)
+    val shouldDisplayProgressBar = _shouldDisplayProgressBar.asStateFlow()
+
+    var firstTime = true
+
     fun setSearchText(text: String) {
         _searchText.value = text
     }
@@ -30,12 +35,15 @@ class SearchExercisesViewModel() : ViewModel() {
     private fun requestData() {
         if (!isRequesting) {
             isRequesting = true
+            _shouldDisplayProgressBar.value = true
             viewModelScope.launch(Dispatchers.IO) {
                 offset = 0
                 val result = ExerciseNinjaAPI.retrofitService.getExercisesByName(name = query, offset = offset).await()
                 _exerciseList.value = result
                 offset += 10
                 isRequesting = false
+                _shouldDisplayProgressBar.value = false
+                firstTime = false
             }
         }
     }

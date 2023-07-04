@@ -41,7 +41,7 @@ class ExerciseViewModel : ViewModel() {
         if (!_shouldDisplayProgressBar.value && !isRequesting) {
             _shouldDisplayProgressBar.value = true
             viewModelScope.launch {
-                val result = ExerciseNinjaAPI.retrofitService.getExercises(muscle = _muscle.value, difficulty = _difficulty.value, offset = offset).await()
+                val result = ExerciseNinjaAPI.retrofitService.getExercises(muscle = _muscle.value, offset = offset).await()
                 _exerciseList.value = result
                 offset += 10
                 _shouldDisplayProgressBar.value = false
@@ -53,7 +53,7 @@ class ExerciseViewModel : ViewModel() {
         if (!isRequesting) {
             isRequesting = true
             viewModelScope.launch(Dispatchers.IO) {
-                val result = ExerciseNinjaAPI.retrofitService.getExercises(muscle = _muscle.value, difficulty = _difficulty.value, offset = offset).await()
+                val result = ExerciseNinjaAPI.retrofitService.getExercises(muscle = _muscle.value, offset = offset).await()
                 _exerciseList.value = _exerciseList.value + result
                 offset += 10
                 isRequesting = false

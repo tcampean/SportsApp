@@ -12,7 +12,9 @@ import androidx.navigation.compose.navigation
 import com.example.sportsapp.data.BottomBarScreen
 import com.example.sportsapp.data.Exercise
 import com.example.sportsapp.data.RecipeDetailed
+import com.example.sportsapp.data.UserData
 import com.example.sportsapp.database.AppDatabase
+import com.example.sportsapp.repository.DiaryRepository
 import com.example.sportsapp.repository.ExerciseRepository
 import com.example.sportsapp.repository.MealPlanRepository
 import com.example.sportsapp.repository.MealRepository
@@ -28,6 +30,8 @@ fun MainNavGraph(navController: NavHostController) {
     ) {
         composable(route = BottomBarScreen.Home.route) {
             val vm: HomeViewModel = viewModel()
+            vm.setRepository(DiaryRepository(AppDatabase.getInstance(LocalContext.current).diaryDao()))
+            vm.setDialogWeight(UserData.user.weight)
             HomeScreen(navController, vm)
         }
         composable(route = BottomBarScreen.Workouts.route) {
@@ -40,6 +44,8 @@ fun MainNavGraph(navController: NavHostController) {
         composable(route = AppScreens.Splash.name) {
             SplashScreen(navController = navController)
         }
+
+        registrationGraph(navController)
 
         foodNavGraph(navController)
         workoutNavGraph(navController)

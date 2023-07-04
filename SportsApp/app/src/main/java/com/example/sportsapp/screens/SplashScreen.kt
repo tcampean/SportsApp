@@ -80,7 +80,7 @@ fun SplashScreen(navController: NavController?, viewModel: LoginViewModel = andr
                     contentScale = ContentScale.FillWidth,
                 )
             }
-            
+
             LoginFormAnimation(visible = loginVisib) {
                 Box(
                     modifier = Modifier

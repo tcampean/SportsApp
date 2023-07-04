@@ -1,9 +1,9 @@
 package com.example.sportsapp.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sportsapp.api.MainAPI
+import com.example.sportsapp.data.CalorieCalculator
 import com.example.sportsapp.data.LoginFormData
 import com.example.sportsapp.data.UserData
 import com.example.sportsapp.data.requestData.UserDetails
@@ -52,15 +52,11 @@ class LoginViewModel() : ViewModel() {
     }
 
     fun changeVisib() {
-        System.out.print("Changed in vm")
-        Log.d("HERRE", "HERE IN VM")
-        _visib.value = !_visib.value
+        _visib.value = true
     }
 
     fun changeLoginVisib() {
-        System.out.print("Changed in vm 2")
-        Log.d("HERRE", "HERE IN VM 2")
-        _shouldDisplayLoginForm.value = !_shouldDisplayLoginForm.value
+        _shouldDisplayLoginForm.value = true
     }
 
     fun logIn(userDao: UserDao, onSuccessfulResponse: (UserDetails) -> Unit) {
@@ -72,6 +68,8 @@ class LoginViewModel() : ViewModel() {
                 _loginError.value = ""
                 userDao.insertUser(UserDataEntity(result.goal, result.activity_level, result.gender, result.weight, result.height, result.age, _username.value))
                 launch(Dispatchers.Main) {
+                    UserData.user = UserDataEntity(result.goal, result.activity_level, result.gender, result.weight, result.height, result.age, _username.value)
+                    UserData.requiredCalories = CalorieCalculator.getRequiredCalories(UserData.user)
                     onSuccessfulResponse(result)
                 }
             } catch (e: HttpException) {
@@ -84,6 +82,8 @@ class LoginViewModel() : ViewModel() {
     fun getUserInfo(dao: UserDao) {
         viewModelScope.launch(Dispatchers.IO) {
             UserData.user = dao.getUser()[0]
+            UserData.requiredCalories = CalorieCalculator.getRequiredCalories(UserData.user)
+            println("Calories " + UserData.requiredCalories)
         }
     }
 }

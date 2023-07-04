@@ -2,6 +2,7 @@ package com.example.sportsapp.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,16 +19,27 @@ import com.example.sportsapp.components.*
 import com.example.sportsapp.data.Recipe
 import com.example.sportsapp.navigation.FoodScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
+import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.SearchFoodViewModel
 
 @Composable
 fun SearchFoodScreen(navController: NavController = rememberNavController(), viewModel: SearchFoodViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val resultList by viewModel.recipeList.collectAsState()
     val searchText by viewModel.searchText.collectAsState()
+    val shouldDisplayProgressBar by viewModel.shouldDisplayProgressBar.collectAsState()
+
     Box(
         modifier = Modifier.fillMaxSize().background(PrimaryColorNavy),
         contentAlignment = Alignment.Center,
     ) {
+        if (shouldDisplayProgressBar && viewModel.firstTime) {
+            CircularProgressIndicator(
+                Modifier
+                    .size(LocalConfiguration.current.screenHeightDp.dp / 8)
+                    .align(Alignment.Center),
+                color = SecondaryColor,
+            )
+        }
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             SearchBar(
                 searchLabel = "Search foods...",
@@ -43,10 +55,14 @@ fun SearchFoodScreen(navController: NavController = rememberNavController(), vie
             PaginatedLazyColumn(
                 resultList,
                 itemLayout = {
-                    SearchFoodItem(title = (it as Recipe).title, imageUrl = it.image, onClick = {
-                        navController.currentBackStackEntry?.arguments?.putInt("ID", it.id)
-                        navController.navigate(route = FoodScreens.FoodDetails.route)
-                    })
+                    SearchFoodItem(
+                        title = (it as Recipe).title,
+                        imageUrl = it.image,
+                        onClick = {
+                            navController.currentBackStackEntry?.arguments?.putInt("ID", it.id)
+                            navController.navigate(route = FoodScreens.FoodDetails.route)
+                        },
+                    )
                 },
                 onScrollToEnd = {
                     viewModel.requestDataAppend()

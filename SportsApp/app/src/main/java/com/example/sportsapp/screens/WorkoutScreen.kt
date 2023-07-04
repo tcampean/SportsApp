@@ -38,7 +38,7 @@ fun WorkoutScreen(navController: NavHostController = rememberNavController()) {
                 textColor = Color.White,
                 icon = R.drawable.baseline_fitness_center_24_white,
                 onClick = {
-                    navController.navigate(WorkoutScreens.ExerciseDifficulty.route)
+                    navController.navigate(WorkoutScreens.ExerciseMuscleGroupSelection.route)
                 },
             )
             PairedCards(

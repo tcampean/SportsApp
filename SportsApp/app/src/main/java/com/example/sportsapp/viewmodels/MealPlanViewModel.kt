@@ -63,6 +63,10 @@ class MealPlanViewModel : ViewModel() {
         dao = mealPlanDao
     }
 
+    fun unlockGeneration() {
+        generationLocked = false
+    }
+
     fun setDialogVisibility(visible: Boolean) {
         _shouldDisplaySaveDialog.value = visible
     }
@@ -132,7 +136,6 @@ class MealPlanViewModel : ViewModel() {
                     _currentWeekMealPlan.value.week.sunday,
                 ),
             )
-            println("Saved in database")
         }
     }
 
@@ -150,10 +153,10 @@ class MealPlanViewModel : ViewModel() {
             viewModelScope.launch {
                 if (mealPlanLength == "day") {
                     val result =
-                        SpoonacularAPI.retrofitService.generateDayMeal(selectedDiet).await()
+                        SpoonacularAPI.retrofitService.generateDayMeal(selectedDiet, UserData.requiredCalories).await()
                     _currentDayMealPlan.value = result
                 } else {
-                    val result = SpoonacularAPI.retrofitService.generateWeekMeal(selectedDiet).await()
+                    val result = SpoonacularAPI.retrofitService.generateWeekMeal(selectedDiet, UserData.requiredCalories).await()
                     println(result)
                     _currentWeekMealPlan.value = result
                     println(_currentWeekMealPlan.value)

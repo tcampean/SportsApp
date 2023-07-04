@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.sportsapp.entity.*
 
-@Database(entities = [FavoriteMealEntity::class, DayMealPlanEntity::class, WeekMealPlanEntity::class, ExerciseEntity::class, UserDataEntity::class], version = 8)
+@Database(entities = [FavoriteMealEntity::class, DayMealPlanEntity::class, WeekMealPlanEntity::class, ExerciseEntity::class, UserDataEntity::class, DiaryEntryEntity::class], version = 10)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun mealDao(): MealDao
@@ -15,6 +15,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
 
     abstract fun userDao(): UserDao
+
+    abstract fun diaryDao(): DiaryDao
 
     companion object {
 

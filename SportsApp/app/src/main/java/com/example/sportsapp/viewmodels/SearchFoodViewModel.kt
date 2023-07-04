@@ -23,6 +23,11 @@ class SearchFoodViewModel : ViewModel() {
     private val _recipeList = MutableStateFlow(listOf<Recipe>())
     val recipeList = _recipeList.asStateFlow()
 
+    private val _shouldDisplayProgressBar = MutableStateFlow(false)
+    val shouldDisplayProgressBar = _shouldDisplayProgressBar.asStateFlow()
+
+    var firstTime = true
+
     fun setSearchText(text: String) {
         _searchText.value = text
     }
@@ -30,12 +35,15 @@ class SearchFoodViewModel : ViewModel() {
     private fun requestData() {
         if (!isRequesting) {
             isRequesting = true
+            _shouldDisplayProgressBar.value = true
             viewModelScope.launch(Dispatchers.IO) {
                 offset = 0
                 val result = SpoonacularAPI.retrofitService.getRecipes(query, offset).await()
                 _recipeList.value = result.results
                 offset += 10
                 isRequesting = false
+                _shouldDisplayProgressBar.value = false
+                firstTime = false
             }
         }
     }
@@ -43,12 +51,14 @@ class SearchFoodViewModel : ViewModel() {
     fun requestDataAppend() {
         if (!isRequesting) {
             isRequesting = true
+            _shouldDisplayProgressBar.value = true
             viewModelScope.launch(Dispatchers.IO) {
                 val result = SpoonacularAPI.retrofitService.getRecipes(query, offset).await()
                 _recipeList.value = _recipeList.value + result.results
                 offset += 10
                 delay(1000)
                 isRequesting = false
+                _shouldDisplayProgressBar.value = false
             }
         }
     }

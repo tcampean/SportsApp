@@ -13,7 +13,6 @@ interface IExerciseNinjaAPI {
     fun getExercises(
         @Header("x-api-key") apiKey: String = "L6IlWHXrG97B2tHAlogqKsrlIJwf3k0gPI3a5djd",
         @Query("muscle") muscle: String,
-        @Query("difficulty") difficulty: String,
         @Query("offset") offset: Int,
     ): Call<List<Exercise>>
 
