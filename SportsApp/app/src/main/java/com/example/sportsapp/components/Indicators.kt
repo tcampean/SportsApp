@@ -22,7 +22,7 @@ import com.example.sportsapp.ui.theme.SecondaryColor
 
 @Composable
 fun CircularProgressbar1(
-    size: Dp = 260.dp,
+    size: Dp = 220.dp,
     foregroundIndicatorColor: Color = SecondaryColor,
     shadowColor: Color = Color.LightGray,
     indicatorThickness: Dp = 24.dp,

@@ -1,6 +1,7 @@
 package com.example.sportsapp.components
 
 import android.R
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -111,8 +113,85 @@ fun CustomDialog(title: String, value: String, setShowDialog: (Boolean) -> Unit,
     }
 }
 
+@Composable
+fun WeightUpdateDialog(value: Int, setShowDialog: (Boolean) -> Unit, onPlusClicked: () -> Unit, onMinusClicked: () -> Unit, onSaveClicked :() -> Unit) {
+
+    Dialog(onDismissRequest = { setShowDialog(false) }) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
+        ) {
+            println("CHANGED WEIGHT TO " + value)
+            Column(modifier = Modifier.padding(20.dp)) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "",
+                    tint = colorResource(R.color.darker_gray),
+                    modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clickable { setShowDialog(false) }
+                        .align(Alignment.End),
+                )
+                Spacer(modifier = Modifier.size(20.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(modifier = Modifier
+                        .size(48.dp)
+                        .clickable {
+                            onMinusClicked()
+                        }, painter = painterResource(id = com.example.sportsapp.R.drawable.baseline_remove_24), contentDescription = "minus")
+                    Text(
+                        text = value.toString(),
+                        style = TextStyle(
+                            fontSize = 48.sp,
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        color = PrimaryColorNavy,
+                    )
+
+                    Image(modifier = Modifier
+                        .size(48.dp)
+                        .clickable {
+                            onPlusClicked()
+                        }, painter = painterResource(id = com.example.sportsapp.R.drawable.baseline_add_24), contentDescription = "add")
+                }
+
+                BaseButton(
+                    onClick = {
+                        setShowDialog(false)
+                        onSaveClicked()
+                    },
+                    backgroundColor = PrimaryColorNavy,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                ) {
+                    Text(text = "Save", color = Color.White)
+                }
+            }
+        }
+    }
+}
+
+
+//@Preview
+//@Composable
+//fun prev() {
+//    CustomDialog(title = "Name your meal plan", value = "yes", setShowDialog = { true }, setValue = {}, onSaveClicked = {})
+//}
+
 @Preview
 @Composable
 fun prev() {
-    CustomDialog(title = "Name your meal plan", value = "yes", setShowDialog = { true }, setValue = {}, onSaveClicked = {})
+    WeightUpdateDialog(86, setShowDialog = { true }, onPlusClicked = {}, onMinusClicked = {}, onSaveClicked = {})
 }
+
+
+

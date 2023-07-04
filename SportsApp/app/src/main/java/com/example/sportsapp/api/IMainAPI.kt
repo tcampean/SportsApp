@@ -16,6 +16,6 @@ interface IMainAPI {
     @POST("/register/")
     fun register(@Body registerData: RegisterData): Call<ResponseBody>
 
-    @PUT("/updateWeight")
-    fun updateWeight(@Body body: Response): Call<Response>
+    @PUT("/updateWeight/")
+    fun updateWeight(@Query("username") username: String, @Query("weight") weight: Int): Call<ResponseBody>
 }

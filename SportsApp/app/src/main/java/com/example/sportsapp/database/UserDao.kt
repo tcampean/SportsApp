@@ -16,4 +16,8 @@ interface UserDao {
 
     @Insert
     fun insertUser(user: UserDataEntity)
+
+    @Query("UPDATE User SET weight = :newWeight")
+    fun updateWeight(newWeight: Int)
+
 }
