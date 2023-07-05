@@ -116,42 +116,41 @@ class FoodDetailsViewModel : ViewModel() {
         }
     }
 
-    fun requestRecipeDetails() {
-        println("GOT INTO EXCEPTION")
+    fun requestRecipeDetails(onRequestFailed: () -> Unit = {}) {
         if (!isRequesting && !isLocal) {
-            println("doing the request")
             _shouldDisplayProgressBar.value = true
             isRequesting = true
             viewModelScope.launch(Dispatchers.IO) {
-                val result = SpoonacularAPI.retrofitService.getRecipeDetails(recipeID).await()
                 try {
-                    val bitmap = Picasso.get().load(result.image).get()
-                    _image.value = bitmap.asImageBitmap()
-                } catch (e: SocketTimeoutException) {
-                    _image.value = null
+                    val result = SpoonacularAPI.retrofitService.getRecipeDetails(recipeID).await()
+                    try {
+                        val bitmap = Picasso.get().load(result.image).get()
+                        _image.value = bitmap.asImageBitmap()
+                    } catch (e: java.lang.Exception) {
+                        _image.value = null
+                    }
+                    recipeUrl = result.image
+                    _title.value = result.title
+                    _servings.value = result.servings
+                    _readyInMinutes.value = result.readyInMinutes
+                    _extendedIngredients.value = result.extendedIngredients
+                    _summary.value = result.summary
+                    nutrition = result.nutrition
+                    setNutritionalValues(result.nutrition.nutrients)
+                    isRequesting = false
+                    _shouldDisplayProgressBar.value = false
+                } catch (e: Exception) {
+                    onRequestFailed()
                 }
-                recipeUrl = result.image
-                _title.value = result.title
-                _servings.value = result.servings
-                _readyInMinutes.value = result.readyInMinutes
-                _extendedIngredients.value = result.extendedIngredients
-                _summary.value = result.summary
-                nutrition = result.nutrition
-                setNutritionalValues(result.nutrition.nutrients)
-                isRequesting = false
-                _shouldDisplayProgressBar.value = false
             }
         } else if (isLocal) {
             viewModelScope.launch(Dispatchers.IO) {
                 _shouldDisplayProgressBar.value = true
-                println("GOT INTO EXCEPTION 2")
-                println("GOT INTO EXCEPTION 3")
                 try {
                     val result = SpoonacularAPI.retrofitService.getRecipeDetails(recipeID).await()
                     val bitmap = Picasso.get().load(result.image).get()
                     _image.value = bitmap.asImageBitmap()
                 } catch (e: Exception) {
-                    println("GOT INTO EXCEPTION" + e.message)
                     _image.value = null
                 }
                 _shouldDisplayProgressBar.value = false

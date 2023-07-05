@@ -82,7 +82,7 @@ fun NavGraphBuilder.foodNavGraph(navController: NavHostController) {
                 viewModel.setRecipeId(id!!)
             }
             viewModel.setDao(AppDatabase.getInstance(LocalContext.current).mealDao())
-            FoodDetailsScreen(viewModel = viewModel)
+            FoodDetailsScreen(navController, viewModel = viewModel)
         }
 
         composable(route = FoodScreens.MealPlannerCategory.route) {

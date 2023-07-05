@@ -32,15 +32,21 @@ class SearchFoodViewModel : ViewModel() {
         _searchText.value = text
     }
 
-    private fun requestData() {
+    private fun requestData(onRequestFailed: () -> Unit = {}) {
         if (!isRequesting) {
             isRequesting = true
             _shouldDisplayProgressBar.value = true
             viewModelScope.launch(Dispatchers.IO) {
                 offset = 0
-                val result = SpoonacularAPI.retrofitService.getRecipes(query, offset).await()
-                _recipeList.value = result.results
-                offset += 10
+                try {
+                    val result = SpoonacularAPI.retrofitService.getRecipes(query, offset).await()
+                    _recipeList.value = result.results
+                    offset += 10
+                } catch (e: java.lang.Exception) {
+                    launch(Dispatchers.Main){
+                        onRequestFailed()
+                    }
+                }
                 isRequesting = false
                 _shouldDisplayProgressBar.value = false
                 firstTime = false
@@ -48,14 +54,20 @@ class SearchFoodViewModel : ViewModel() {
         }
     }
 
-    fun requestDataAppend() {
+    fun requestDataAppend(onRequestFailed: () -> Unit) {
         if (!isRequesting) {
             isRequesting = true
             _shouldDisplayProgressBar.value = true
             viewModelScope.launch(Dispatchers.IO) {
-                val result = SpoonacularAPI.retrofitService.getRecipes(query, offset).await()
-                _recipeList.value = _recipeList.value + result.results
-                offset += 10
+                try {
+                    val result = SpoonacularAPI.retrofitService.getRecipes(query, offset).await()
+                    _recipeList.value = _recipeList.value + result.results
+                    offset += 10
+                } catch (e: java.lang.Exception) {
+                    launch(Dispatchers.Main) {
+                        onRequestFailed()
+                    }
+                }
                 delay(1000)
                 isRequesting = false
                 _shouldDisplayProgressBar.value = false
@@ -63,8 +75,8 @@ class SearchFoodViewModel : ViewModel() {
         }
     }
 
-    fun searchRecipe() {
+    fun searchRecipe(onRequestFailed: () -> Unit) {
         query = _searchText.value
-        requestData()
+        requestData(onRequestFailed = { onRequestFailed() })
     }
 }

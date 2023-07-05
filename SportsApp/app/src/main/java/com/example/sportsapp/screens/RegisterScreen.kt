@@ -30,7 +30,6 @@ import com.example.sportsapp.components.InputTextField
 import com.example.sportsapp.components.UserInputDetailsTemplateScreen
 import com.example.sportsapp.data.requestData.RegisterData
 import com.example.sportsapp.navigation.AppScreens
-import com.example.sportsapp.navigation.RegisterScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.viewmodels.RegisterViewModel
 import kotlinx.coroutines.Dispatchers
@@ -69,7 +68,7 @@ fun RegisterScreen(navController: NavController = rememberNavController(), viewM
                             Toast.makeText(
                                 context,
                                 "Account created successfully!",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             ).show()
                             navController.navigate(AppScreens.Splash.name) {
                                 popUpTo(0)
@@ -80,7 +79,7 @@ fun RegisterScreen(navController: NavController = rememberNavController(), viewM
                             Toast.makeText(
                                 context,
                                 "This username already exists!",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_LONG,
                             )
                                 .show()
                         }
@@ -90,7 +89,7 @@ fun RegisterScreen(navController: NavController = rememberNavController(), viewM
                         Toast.makeText(
                             context,
                             "The fields must not be empty and must be at least 4 characters long!",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_LONG,
                         )
                             .show()
                     }

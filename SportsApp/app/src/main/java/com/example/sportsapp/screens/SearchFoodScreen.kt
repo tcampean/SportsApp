@@ -1,5 +1,6 @@
 package com.example.sportsapp.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -8,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,12 +23,15 @@ import com.example.sportsapp.navigation.FoodScreens
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.SearchFoodViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchFoodScreen(navController: NavController = rememberNavController(), viewModel: SearchFoodViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val resultList by viewModel.recipeList.collectAsState()
     val searchText by viewModel.searchText.collectAsState()
     val shouldDisplayProgressBar by viewModel.shouldDisplayProgressBar.collectAsState()
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier.fillMaxSize().background(PrimaryColorNavy),
@@ -47,10 +52,17 @@ fun SearchFoodScreen(navController: NavController = rememberNavController(), vie
                 onTextChange = {
                     viewModel.setSearchText(it)
                 },
-                onSearchButtonClicked = {
-                    viewModel.searchRecipe()
-                },
-            )
+            ) {
+                viewModel.searchRecipe {
+                    Toast.makeText(
+                        context,
+                        "You are not connected to the internet!",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                    navController.popBackStack()
+                }
+            }
 
             PaginatedLazyColumn(
                 resultList,
@@ -65,7 +77,15 @@ fun SearchFoodScreen(navController: NavController = rememberNavController(), vie
                     )
                 },
                 onScrollToEnd = {
-                    viewModel.requestDataAppend()
+                    viewModel.requestDataAppend {
+                        Toast.makeText(
+                            context,
+                            "You are not connected to the internet!",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                        navController.popBackStack()
+                    }
                 },
             )
         }

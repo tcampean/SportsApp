@@ -1,6 +1,7 @@
 package com.example.sportsapp.screens
 
 import android.text.Html
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -14,21 +15,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.sportsapp.R
 import com.example.sportsapp.components.RoundTopCard
 import com.example.sportsapp.data.Ingredient
 import com.example.sportsapp.ui.theme.PrimaryColorNavy
 import com.example.sportsapp.ui.theme.SecondaryColor
 import com.example.sportsapp.viewmodels.FoodDetailsViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun FoodDetailsScreen(
+    navController: NavController = rememberNavController(),
     viewModel: FoodDetailsViewModel,
 ) {
     val image by viewModel.image.collectAsState()
@@ -44,10 +51,17 @@ fun FoodDetailsScreen(
     val carbs by viewModel.carbs.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.checkIfFavorite()
-        viewModel.requestRecipeDetails()
+        viewModel.requestRecipeDetails {
+            launch(Dispatchers.Main) {
+                Toast.makeText(context, "You are not connected to the internet!", Toast.LENGTH_LONG)
+                    .show()
+                navController.popBackStack()
+            }
+        }
     }
     Box(
         modifier = Modifier
